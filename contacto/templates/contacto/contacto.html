@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row" id="row-contacto">
+
+    <div class="col-md-5">
+
+        <hr>
+            <h3>ENVIANOS TU CONSULTA</h3>
+        <hr>
+
+        <form action="." method="POST" autocomplete="off" id="form-contacto">
+            {% csrf_token %}
+
+            <div> 
+                {{ contacto_form.email_contacto }}
+            </div>
+            <div>
+                {{ contacto_form.mensaje }}
+            </div>
+            
+            <input type="hidden" name="g-recaptcha-response" id='recaptcha'>
+            
+            <button type="submit" class="c-button c-button--gooey" style=" background-color: rgba(0, 0, 0, 0.795); outline-style: none;" >
+                MANDAR MENSAJE
+                <div class="c-button__blobs">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </button>        
+            
+        </form>
+    </div>
+
+    <div class="col-md-5">
+
+        <hr>
+            <h3>DATOS DE CONTACTO</h3>
+        <hr>
+
+        <p><span id="whatsapp-contacto">Whatsapp: </span>+54 9 2215 25-6378</p>
+        <p><span id="email-contacto">Email: </span>ventas@idacom.ar</p>
+
+    </div>
+
+</div>
+
+{{ recaptcha_site_key|json_script:"site_key" }}
+<script type="text/javascript" src="{% static 'js/contacto.js' %}"></script>
+
+
+
+{% endblock %}

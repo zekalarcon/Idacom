@@ -1,0 +1,916 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load compra_tags %}
+<style>
+
+    .c-button--gooey {
+        display : flex;
+        align-items : center;
+        justify-content : center;
+        height: 48px;
+        letter-spacing: normal;
+        font-size: 12px;
+        border-radius: 7px;
+        
+    }
+
+    .swiper {
+        width: 80%;
+        height: 300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #botones-detail {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .swiper-button-next, .swiper-button-prev{
+        color: #000009;
+    }
+
+    .swiper-slide {
+        background-size: cover;
+        background-position: center;
+    }
+
+    .mySwiper2 {
+        height: 70%;
+        width: 100%;
+    }
+
+    .mySwiper {
+        height: 20%;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0 0;
+    }
+
+    .mySwiper .swiper-slide {
+        width: 25%;
+        height: 100%;
+        opacity: 0.4;
+    }
+
+    .mySwiper .swiper-slide-thumb-active {
+        opacity: 1;
+    }
+
+    .mySwiper .swiper-slide img{
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .mySwiper2 .swiper-slide img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .mySwiper2Mini {
+        height: 70%;
+        width: 100%;
+    }
+
+    .mySwiperMini {
+        height: 20%;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0 0;
+    }
+
+    .mySwiperMini .swiper-slide {
+        width: 25%;
+        height: 100%;
+        opacity: 0.4;
+    }
+
+    .mySwiperMini .swiper-slide-thumb-active {
+        opacity: 1;
+    }
+
+    .mySwiperMini .swiper-slide img{
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .mySwiper2Mini .swiper-slide img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+
+    @media only screen and (max-width: 1000px),
+	(min-device-width: 700px) and (max-device-width: 1024px){
+			
+
+        #added-detail{
+            margin-top: 10px;
+        }
+
+        #added{
+            margin-top: 0px;
+        }
+
+        #sin-stock-button{
+            width: 90%;
+            margin-top: 2px;
+        }
+
+        #precio-tachado{
+            margin-top: -23px;
+            margin-bottom: 21px;
+        }
+
+        #carousel-mini-img{
+            margin-top: 32px;
+        }
+
+        .splide--ttb>.splide__pagination{
+            top: auto;
+            margin-bottom: 150px;
+        }
+
+      
+	}
+
+    @media only screen and (max-width: 999px),
+	(min-device-width: 448px) and (max-device-width: 999px){
+
+        .c-button--gooey {
+            margin-right: auto;
+            width: 91%;
+        }
+
+    }
+      
+    @media only screen and (max-width: 448px),
+    (min-device-width: 200px) and (max-device-width: 448px){
+
+        .c-button--gooey {
+            margin-right: auto;
+            width: 93%;
+        }
+
+    }
+
+    
+
+</style>
+
+
+<div class="row" id="detail-1row">
+
+    <div id="carousel-mini-img" >
+        <div class="swiper mySwiper2Mini">
+            <div class="swiper-wrapper">
+                {% for p in photos %}
+                    <div class="swiper-slide" >
+                        <img src="{{p.imagenes.url}}" />
+                    </div>
+                {% endfor %}
+            </div>  
+        </div>
+
+        <div thumbsSlider="" class="swiper mySwiperMini">
+            <div class="swiper-wrapper">
+                {% for p in photos %}
+                    <div class="swiper-slide">
+                        <img src="{{p.imagenes.url}}"/>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+        
+    </div>
+
+    <div id="descripcion-mini">
+        
+        <div style="width: 90%; font-weight: 900; font-size: 20px;">{{producto.nombre}}</div>
+
+        {% if producto.disponible == True %}
+
+            {% if producto.precio >= 4000%}
+
+                <div style="color: rgb(34 228 16); font-weight: 900;">
+                    ENVIO GRATIS
+                </div>
+
+            {% else %}
+
+                <div style="color: rgb(34 228 16); font-weight: 900;">
+                    STOCK DISPONIBLE
+                </div>
+
+            {% endif %}
+            
+        {% else %}
+    
+        <div class="stock" style="font-size: 15px; color: red;">
+            STOCK NO DISPONIBLE
+        </div>
+                
+        {% endif %}
+
+        <div style="left: 15px;">
+            <div class="stars" style="--rating: {{producto.get_calificacion}};"></div>
+            <div>
+                <p id="cantidad-compras" >{{producto.get_cantidad_calificaciones}} COMPRAS</p>
+            </div>
+        </div>
+
+        <div id="detail-mini-precio" style="margin-top: -15px; margin-bottom: 5px;">
+          
+            {% if producto.precio_descuento == 0 %}
+
+                {% if producto.especial == True%}
+                    {% if producto.precio_tachado != 0 %}
+                        <div class="style-3" >
+                            <ins>
+                                ${{producto.precio|floatformat:0}}
+                            </ins>
+                            <div id="precio-tachado" style="margin-top: -12px;">
+                                ${{producto.precio_tachado|floatformat:0}}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="style-3" >
+                            <ins>
+                                ${{producto.precio|floatformat:0}}
+                            </ins>
+                        </div>
+                    {% endif %}  
+                {% elif producto.precio >= 9000 or order.total_check >= 9000 %}
+                    <div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; margin-bottom: -10px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div> 
+                    <div class="style-3" style="margin-top: 4px;">
+                        <ins>
+                            ${% percentage 10 producto.precio %}
+                        </ins>
+                    </div>
+                    <div id="precio-tachado" style="margin-top: -12px;">
+                        ${{producto.precio|floatformat:0}}
+                    </div>
+                {% else %}
+                    <div class="style-3" >
+                        <ins>
+                            ${{producto.precio|floatformat:0}}
+                        </ins>
+                    </div>
+                {% endif %}
+            
+            {% else %}
+                    
+                {% if producto.especial == True%}
+                    {% if producto.precio_tachado != 0 %}
+                        <div class="style-3" >
+                            <ins>
+                                ${{producto.precio|floatformat:0}}
+                            </ins>
+                            <div id="precio-tachado" style="margin-top: -12px;">
+                                ${{producto.precio_tachado|floatformat:0}}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="style-3" >
+                            <ins>
+                                ${{producto.precio|floatformat:0}}
+                            </ins>
+                        </div>
+                    {% endif %}                   
+                {% elif producto.precio >= 9000 or order.total_check >= 9000 %}
+                    <div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; margin-bottom: -10px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div> 
+                    <div class="style-3" style="margin-top: 4px;">
+                        {% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+                            <ins>
+                                ${% percentage 10 producto.precio_descuento %}
+                            </ins>
+                            <div id="precio-tachado" style="margin-top: -12px;">
+                                ${{producto.precio_descuento|floatformat:0}}
+                            </div>
+                        {% else %}
+                            <ins>
+                                ${% percentage 10 producto.precio %}
+                            </ins>
+                            <div id="precio-tachado" style="margin-top: -12px;">
+                                ${{producto.precio|floatformat:0}}
+                            </div>
+                        {% endif %}
+                    </div>
+               
+                {% else %}
+                    {% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+                        <div style="left: 15px;">
+                            <div id="precio-sin-tachar">
+                                ${{producto.precio_descuento|floatformat:0}}
+                            </div>                 
+                            <div id="precio-tachado" style="margin-top: -12px;">
+                                ${{producto.precio|floatformat:0}}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div style="left: 15px;">
+                            <div id="precio-sin-tachar">
+                                ${{producto.precio|floatformat:0}}
+                            </div>                 
+                            <div id="precio-tachado" style="margin-top: -12px;">
+                                ${{producto.precio_descuento|floatformat:0}}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+            {% endif %}
+            
+        </div>
+
+        {% if producto.combo == True %}
+                
+                <div style="margin-top: 5px;">
+                    <p style="font-weight: 900; margin-bottom: -5px;">EL COMBO INCLUYE:</p>
+                    <div id="wrapper-descripcion">
+                        {% for item in items_combo %}
+                            <p style="margin-bottom: 5px; margin-top: 5px;">- {{item.nombre|title}} x {{item.cantidad}}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div style="margin-top: 5px;">
+                    <p style="font-weight: 900; margin-bottom: -5px;">CARACTERISTICAS</p>
+                    <div id="wrapper-caracteristicas">
+                        {% for caracteristica in caracteristicas_lista %}
+                            <p style="margin-bottom: 5px; margin-top: 5px;">{{caracteristica}}</p> 
+                        {% endfor %}
+                    </div>
+                </div>
+            
+        {% else %}
+
+            <div style="margin-top: -10px;">
+                <h6 style="font-weight: 900;">DESCRIPCION</h6>
+                <div id="wrapper-descripcion">
+                    {{producto.descripcion}}
+                </div>
+            </div>
+
+            <div style="margin-top: 5px;">
+                <h6 style="font-weight: 900;">CARACTERISTICAS</h6>
+                <div id="wrapper-caracteristicas">
+                    {% for caracteristica in caracteristicas_lista %}
+                        <p style="margin-bottom: 5px; margin-top: 5px;">{{caracteristica}}</p> 
+                    {% endfor %}
+                </div>
+            </div>
+
+        {% endif %}
+
+        <div style="text-align: center; margin-top: 30px;">
+
+            {% if producto.disponible == True %}
+            <button class="col cart-button" id="cart-button" data-product="{{producto.id}}" data-action="add" data-info="detail" onclick="botonTabla(this)" style="background-color: #1d1f1d; outline-style: none;">
+            {% else %}  
+            <button class="col cart-button" id="cart-button" data-product="{{producto.id}}" data-action="add"  style="background-color: rgb(116, 116, 116); outline-style: none;" disabled>
+            {% endif %}
+                <span class="add-to-cart" >AGREGAR AL CARRITO</span>
+                <span class="added" id="added-detail">AGREGADO</span>
+                <i class="fas fa-shopping-cart"></i>
+                <i class="fas fa-box"></i>
+            </button>
+
+            {% if cartItems > 0 %}
+                <a href="{% url 'carrito' %}" class="c-button c-button--gooey ml-auto" style="background-color: rgba(110, 107, 107, 0.89); outline-style: none;">
+                    <span>FINALIZAR COMPRA</span> 
+                    <div class="c-button__blobs">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </a>
+            {% else %}
+
+            {% endif %}
+
+        </div>
+    
+    </div>
+
+    <div class="col-lg-6">
+        <!-- Swiper -->
+
+        <div class="swiper mySwiper2">
+            <div class="swiper-wrapper">
+                {% for p in photos %}
+                    <div class="swiper-slide" >
+                        <img src="{{p.imagenes.url}}" />
+                    </div>
+                {% endfor %}
+            </div>
+            
+        </div>
+
+        <div thumbsSlider="" class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                {% for p in photos %}
+                    <div class="swiper-slide">
+                        <img src="{{p.imagenes.url}}"/>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+
+    </div>
+
+    <div class="col" id='descripcion-details'>  
+        
+        <hr style="margin-bottom: 0px;">
+        <div >
+            <span style="font-size: 17px; font-weight: 900;">{{producto.nombre}}</span>
+        </div>
+        
+        {% if producto.disponible == True %}
+
+            {% if producto.precio >= 4000%}
+
+                <div style="color: rgb(34 228 16); font-weight: 900; display: inline;">
+                    <span style="font-size: 13px;">ENVIO GRATIS</span>
+                </div>
+
+            {% else %}
+
+                <div style="color: rgb(34 228 16); font-weight: 900; display: inline;">
+                    <span style="font-size: 13px;">STOCK DISPONIBLE</span>
+                </div>
+
+            {% endif %}
+
+        {% else %}
+    
+        <div style="color: red; display: inline;">
+            <span style="font-size: 13px;">STOCK NO DISPONIBLE</span>
+        </div>
+                
+        {% endif %}
+
+        <div class="stars" style="--rating: {{producto.get_calificacion}};" style="display: inline;"></div>
+        <div style="display: inline;">
+            <span style="font-size: 13px;">{{producto.get_cantidad_calificaciones}} COMPRAS</span> 
+        </div>
+
+        <hr style="margin-top: 0px;">
+
+        <!--<div style="color: seagreen;">
+            ENVIO GRATIS EN ORDENES MAYORES A $4000<br>
+        </div>-->
+
+        {% if producto.combo == True %}
+
+            <div class="row" style="text-align: center; justify-content:center;">
+
+                <div class="col-lg-6">
+
+                    <p style="font-weight: 900; margin-bottom: 25px; font-size: 16px;">EL COMBO INCLUYE:</p>
+                    <div id="wrapper-descripcion"> 
+                        {% for item in items_combo %}
+                            <p style="font-size: 14px;">- {{item.nombre|title}} x {{item.cantidad}}</p>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <div class="col-lg-6">
+
+                    <p style="font-weight: 900; margin-bottom: 25px; font-size: 16px;">CARACTERISTICAS</p>
+                    <div id="wrapper-caracteristicas"> 
+                        {% for caracteristica in caracteristicas_lista %}
+                            <p style="font-size: 14px;">{{caracteristica}}</p> 
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+
+        {% else %}
+
+            <div class="row" style="text-align: center; justify-content:center;">
+                
+                <div class="col-lg-6">
+                                          
+                    <p style="font-weight: 900; margin-bottom: 25px; font-size: 16px;">DESCRIPCION</p>
+                    <div id="wrapper-descripcion">   
+                        <p style="font-size: 14px;">{{producto.descripcion}}</p>
+                    </div>
+
+                </div>
+
+                <div class="col-lg-6">
+                    
+                    <p style="font-weight: 900; margin-bottom: 25px; font-size: 16px;">CARACTERISTICAS</p>
+                    <div id="wrapper-caracteristicas">  
+                        {% for caracteristica in caracteristicas_lista %}
+                            <p style="font-size: 14px;">{{caracteristica}}</p> 
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+        {% endif %}
+
+        <div id="detail-precio" style="margin-top: 10px;">
+            
+            {% if producto.precio_descuento == 0 %}
+
+                {% if producto.especial == True%}
+                    {% if producto.precio_tachado != 0 %}
+                        <div class="style-3">
+                            <ins>
+                                ${{producto.precio|floatformat:0}}
+                            </ins>
+                            <div id="precio-tachado" style="margin-top: -12px;">
+                                ${{producto.precio_tachado|floatformat:0}}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="style-3" >
+                            <ins>
+                                ${{producto.precio|floatformat:0}}
+                            </ins>
+                        </div>
+                    {% endif %}
+                {% elif producto.precio >= 9000 or order.total_check >= 9000 %}
+                    <div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; margin-bottom: -10px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div> 
+                    <div class="style-3">
+                        <ins>
+                            ${% percentage 10 producto.precio %}
+                        </ins>
+                    </div>
+                    <div id="precio-tachado" style="margin-top: -12px;">
+                        ${{producto.precio|floatformat:0}}
+                    </div>
+                {% else %}
+                    <div class="style-3" >
+                        <ins>
+                            ${{producto.precio|floatformat:0}}
+                        </ins>
+                    </div>
+                {% endif %}
+            
+            {% else %}
+
+                {% if producto.especial == True%}
+                    {% if producto.precio_tachado != 0 %}
+                        <div class="style-3">
+                            <ins>
+                                ${{producto.precio|floatformat:0}}
+                            </ins>
+                            <div id="precio-tachado" style="margin-top: -12px;">
+                                ${{producto.precio_tachado|floatformat:0}}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="style-3" >
+                            <ins>
+                                ${{producto.precio|floatformat:0}}
+                            </ins>
+                        </div>
+                    {% endif %}             
+                {% elif producto.precio >= 9000 %}
+                    <div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; margin-bottom: -10px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div> 
+                    <div class="style-3">
+                        {% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+                            <ins>
+                                ${% percentage 10 producto.precio_descuento %}
+                            </ins>
+                            <div id="precio-tachado" style="margin-top: -12px;">
+                                ${{producto.precio_descuento|floatformat:0}}
+                            </div>
+                        {% else %}
+                            <ins>
+                                ${% percentage 10 producto.precio %}
+                            </ins>
+                            <div id="precio-tachado" style="margin-top: -12px;">
+                                ${{producto.precio|floatformat:0}}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    {% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+                        <div class="style-3">
+                            <ins>
+                                ${{producto.precio_descuento|floatformat:0}}
+                            </ins>
+                        </div>
+                        <div id="precio-tachado" style="margin-top: -12px;">
+                            ${{producto.precio|floatformat:0}}
+                        </div>
+                    {% else %}
+                        <div class="style-3">
+                            <ins>
+                                ${{producto.precio|floatformat:0}}
+                            </ins>
+                        </div>
+                        <div id="precio-tachado" style="margin-top: -12px;">
+                            ${{producto.precio_descuento|floatformat:0}}
+                        </div>
+                    {% endif %}
+                {% endif %}
+              
+            {% endif %}
+
+        </div>
+
+        <div id="botones-detail">
+           
+            <div>
+
+                {% if producto.disponible == True %}
+                <button class="col cart-button"  id="cart-button" data-product="{{producto.id}}" data-action="add" data-info="detail" onclick="botonTabla(this)" style="background-color: #1d1f1d; outline-style: none;">
+                    <span class="add-to-cart" >AGREGAR AL CARRITO</span>
+                    
+                {% else %}  
+                <button class="col cart-button" id="sin-stock-button" data-product="{{producto.id}}" data-action="add"  style="background-color: rgb(94, 94, 94); outline-style: none;" disabled>
+                    <span class="add-to-cart" >AGREGAR AL CARRITO</span>
+                {% endif %}
+                    <span class="added" id="added">AGREGADO</span>
+                    <i class="fas fa-shopping-cart"></i>
+                    <i class="fas fa-box"></i>
+                </button>
+            </div>
+
+            {% if cartItems > 0 %}
+            <div>
+                <a href="{% url 'carrito' %}" class="col c-button c-button--gooey ml-auto" style="background-color: rgba(110, 107, 107, 0.89); outline-style: none;">
+                    <span>FINALIZAR COMPRA</span> 
+                    <div class="c-button__blobs">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </a>
+            </div>
+            {% else %}
+
+            {% endif %}
+        </div>
+
+        <br>
+    </div>
+        
+    <p class="label-home-menubar" id="changeText">Envio gratis en ordenes superiores a $4000</p>
+</div>   
+
+<div style="display: block; margin-bottom: 40px;" id="slider-no-te-olvides">
+    <div style="width: 80%; margin-left: auto; margin-right: auto;">
+        <hr>
+        <p style="text-align: center;" id="no-te-olvides-label">NO TE OLVIDES DE NADA</p>
+        <hr>
+    </div>
+    
+    <div class="swiper" id="swiper-detail-1">
+		
+        <div class="swiper-wrapper">
+            <!-- Slides -->
+
+            {% for producto in products %}
+                <div class="swiper-slide">
+                    <div class="container text-center my-3">
+                        <div class="img-div-swiper">
+                            <a href="{% url 'detail' producto.slug %}"><img src="{{producto.imageURL}}" style="width: 100px; height: 100px;"></a>
+                        </div>
+                        <div id="nombre-slide">
+                            <a href="{% url 'detail' producto.slug %}" style="color: rgba(0, 0, 0, 0.9); text-decoration: none;">{{producto.nombre}}</a>
+                        </div>
+                        
+                        {% if producto.precio_descuento == 0 %}
+
+                            {% if producto.especial == True %}
+                                {% if producto.precio_tachado != 0 %}
+                                    <br>
+                                    <br>
+                                    <div id="slide-precio">
+                                        <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_tachado|floatformat:0}}</span></p>
+                                    </div>
+                                {% else %}
+                                    <br>
+                                    <br>
+                                    <div id="slide-precio" style="margin-bottom: 0px;">
+                                        <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}</p>
+                                    </div>
+                                    <br>
+                                {% endif %}
+                            {% elif producto.precio >= 9000 or order.total_check >= 9000 %}
+                                <div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div>
+                                <div id="slide-precio">
+                                    <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 producto.precio %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio|floatformat:0}}</span></p>
+                                </div>
+                            {% else %}
+                                <br>
+                                <br>
+                                <div id="slide-precio" style="margin-bottom: 0px;">
+                                    <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${{producto.precio|floatformat:0}}</p>
+                                </div>
+                                <br>
+                            {% endif %}
+
+                        {% else %}
+
+                            {% if producto.especial == True %}		
+                                {% if producto.precio_tachado != 0 %}
+                                    <br>
+                                    <br>
+                                    <div id="slide-precio">
+                                        <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_tachado|floatformat:0}}</span></p>
+                                    </div>
+                                {% else %}
+                                    <br>
+                                    <br>
+                                    <div id="slide-precio" style="margin-bottom: 0px;">
+                                        <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}</p>
+                                    </div>
+                                    <br>
+                                {% endif %}								
+                            {% elif producto.precio >= 9000 or order.total_check >= 9000 %}
+                                <div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div>
+                                    {% if 'CB016' in products_sku  or 'LA PLANCHETTA® 1 HORNALLA' in products_sku %}
+                                        <div id="slide-precio">
+                                            <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 producto.precio_descuento %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_descuento|floatformat:0}}</span></p>
+                                        </div>
+                                    {% else %}
+                                        <div id="slide-precio">
+                                            <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 producto.precio %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio|floatformat:0}}</span></p>
+                                        </div>
+                                    {% endif %}
+                            {% else %}
+                                {% if 'CB016' in products_sku  or 'LA PLANCHETTA® 1 HORNALLA' in products_sku %}
+                                    <div id="slide-precio" style="margin-bottom: -20px;">
+                                        <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${{producto.precio_descuento|floatformat:0}}<br><p id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio|floatformat:0}}</p></p>
+                                    </div>
+                                {% else %}
+                                    <div id="slide-precio" style="margin-bottom: -20px;">
+                                        <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${{producto.precio|floatformat:0}}<br><p id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_descuento|floatformat:0}}</p></p>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                    
+                        {% endif %}
+                        
+                        {% if producto.disponible == True %}
+                        <button class="col cart-button" id="cart-button" data-product="{{producto.id}}" data-action="add" data-info="home" onclick="botonTabla(this)" style="background-color: #1d1f1d; outline-style: none;">
+                            <span class="add-to-cart" >AGREGAR AL CARRITO</span>         
+                        {% else %}  
+                        <button class="col cart-button" id="sin-stock-button"  data-product="{{producto.id}}" data-action="add"  style="background-color: #1d1f1d; outline-style: none;" disabled>
+                            <span class="add-to-cart">SIN STOCK</span>
+                        {% endif %}
+                            <span class="added" id="added">AGREGADO</span>
+                            <i class="fas fa-shopping-cart"></i>
+                            <i class="fas fa-box"></i>
+                        </button>
+
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+
+        <!-- If we need navigation buttons -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>  
+
+    </div>
+
+</div>
+
+<div style="display: none; margin-bottom: 40px;" id="slider-no-te-olvides2">
+    <div style="width: 80%; margin-left: auto; margin-right: auto;">
+        <hr>
+        <p style="text-align: center;" id="no-te-olvides-label">NO TE OLVIDES DE NADA</p>
+        <hr>
+    </div>
+    
+    <div class="swiper" id="swiper-detail-2">
+		
+        <div class="swiper-wrapper">
+            <!-- Slides -->
+
+            {% for producto in products %}
+
+                <div class="swiper-slide">
+                    <div class="container text-center my-3">
+                        <div class="img-div-swiper">
+                            <a href="{% url 'detail' producto.slug %}"><img src="{{producto.imageURL}}" style="width: 100px; height: 100px;"></a>
+                        </div>
+                        <div id="nombre-slide">
+                            <a href="{% url 'detail' producto.slug %}" style="color: rgba(0, 0, 0, 0.9); text-decoration: none;">{{producto.nombre}}</a>
+                        </div>
+                        
+                        {% if producto.precio_descuento == 0 %}
+
+                            {% if producto.especial == True %}
+                                {% if producto.precio_tachado != 0 %}
+                                    <br>
+                                    <br>
+                                    <div id="slide-precio">
+                                        <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_tachado|floatformat:0}}</span></p>
+                                    </div>
+                                {% else %}
+                                    <br>
+                                    <br>
+                                    <div id="slide-precio" style="margin-bottom: 0px;">
+                                        <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}</p>
+                                    </div>
+                                    <br>
+                                {% endif %}
+                            {% else %}
+                                <div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div>
+                                <div id="slide-precio">
+                                    <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 producto.precio %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio|floatformat:0}}</span></p>
+                                </div>
+                            {% endif %}
+
+                        {% else %}
+
+                            {% if producto.especial == True %}		
+                                {% if producto.precio_tachado != 0 %}
+                                    <br>
+                                    <br>
+                                    <div id="slide-precio">
+                                        <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_tachado|floatformat:0}}</span></p>
+                                    </div>
+                                {% else %}
+                                    <br>
+                                    <br>
+                                    <div id="slide-precio" style="margin-bottom: 0px;">
+                                        <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}</p>
+                                    </div>
+                                    <br>
+                                {% endif %}								
+                            {% else %}
+                                <div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div>
+                                    {% if 'CB016' in products_sku  or 'LA PLANCHETTA® 1 HORNALLA' in products_sku %}
+                                        <div id="slide-precio">
+                                            <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 producto.precio_descuento %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_descuento|floatformat:0}}</span></p>
+                                        </div>
+                                    {% else %}
+                                        <div id="slide-precio">
+                                            <p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 producto.precio %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio|floatformat:0}}</span></p>
+                                        </div>
+                                    {% endif %}
+                            {% endif %}
+                    
+                        {% endif %}
+                        
+                        {% if producto.disponible == True %}
+                        <button class="col cart-button" id="cart-button" data-product="{{producto.id}}" data-action="add" data-info="home" onclick="botonTabla(this)" style="background-color: #1d1f1d; outline-style: none;">
+                            <span class="add-to-cart" >AGREGAR AL CARRITO</span>         
+                        {% else %}  
+                        <button class="col cart-button" id="sin-stock-button"  data-product="{{producto.id}}" data-action="add"  style="background-color: #1d1f1d; outline-style: none;" disabled>
+                            <span class="add-to-cart">SIN STOCK</span>
+                        {% endif %}
+                            <span class="added" id="added">AGREGADO</span>
+                            <i class="fas fa-shopping-cart"></i>
+                            <i class="fas fa-box"></i>
+                        </button>
+                    </div>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- If we need navigation buttons -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>  
+        
+    </div>
+
+</div>
+
+  
+<script type="text/javascript" src="{% static 'js/detail.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bannerSuperior.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        document.title = '{{producto.nombre}}';
+    });
+</script>
+
+{% endblock content %}
+
+
+
+
+
+
+

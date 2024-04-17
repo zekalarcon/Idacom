@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}    
+
+<head>
+	<title>Etiquetas por cantidad</title>
+    <link rel="shortcut icon" type="image/png" href="/static/images/logo_idacom.png">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Pattaya&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cuprum&family=Kaushan+Script&family=Yanone+Kaffeesatz:wght@200;700&display=swap" rel="stylesheet">
+    
+
+    <style>
+
+        #title{
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #btn-imprimir{
+            background-color: rgb(110, 110, 110);
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 15px;
+        }
+
+        a, a:hover, a:focus, a:active {
+            text-decoration: none;
+            color: inherit;
+        }
+
+
+    </style>
+
+</head>
+<body>
+    
+    <div id="title">
+        <hr>
+        <h1>ETIQUETAS <span style="color: rgb(94, 3, 179);">OCA</span></h1>
+        <hr>
+        <h5>TENES {{cantidad_compras}} ETIQUETAS PARA IMPRIMIR</h5>
+        <br>
+       
+
+        <div>
+            <form action="" method="POST">
+                {% csrf_token %}
+
+                {% if cantidad_compras %}
+                    <input type="submit" class="btn" value="VER ETIQUETA/S" name="ver" formtarget="_blank"/>
+                    <input type="submit" class="btn" value="MARCAR COMO IMPRESAS" name="borrar" />
+                {% else %}
+                    <input type="submit" class="btn" value="VER ETIQUETAS/S" name="ver" formtarget="_blank" disabled/>
+                    <input type="submit" class="btn" value="MARCAR COMO IMPRESAS" name="borrar"  disabled/>
+                {% endif %}
+
+            </form>
+        </div>
+    </div>
+    
+</body>
+
+</html>

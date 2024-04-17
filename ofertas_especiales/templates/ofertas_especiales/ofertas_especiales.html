@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+
+<head>
+    <title>IDACOM PROMOS</title>
+    <link rel="shortcut icon" type="image/png" href="/static/images/logo_idacom.png">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Pattaya&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cuprum&family=Kaushan+Script&family=Yanone+Kaffeesatz:wght@200;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Monoton&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.3.1/dist/css/splide.min.css">
+
+    <script type="text/javascript">
+
+        var user = '{{request.user}}'
+
+        function getToken(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getToken('csrftoken');
+        console.log('CSRFTOKEN:', csrftoken)
+        
+        
+    </script>
+
+    <style>
+        .navbar {
+			overflow: hidden;
+			background-color: rgb(0, 0, 0);
+			position: fixed; /* Set the navbar to fixed position */
+			top: 0; /* Position the navbar at the top of the page */
+			width: 100%; /* Full width */
+			z-index: 3;
+			justify-content: center;
+			height: 67px;
+		}
+
+        svg {
+			display: block;
+			font: 20.5em 'Montserrat';
+			font-weight: 500;
+			width: 250px;
+			height: 60px;
+		}
+
+		.text-copy {
+			fill: none;
+			stroke: white;
+			stroke-dasharray: 20% 20% 20% 20% 20%; 
+			stroke-width: 13px;
+			stroke-dashoffset: 0%;
+			animation: stroke-offset 20s infinite  ;
+		}
+
+		.text-copy:nth-child(1){
+			stroke: #949494;
+			animation-delay: -1;
+		}
+
+		.text-copy:nth-child(2){
+			stroke: #000000;
+			animation-delay: -2s;
+		}
+
+		.text-copy:nth-child(3){
+			stroke: #44abff;
+			animation-delay: -3s;
+		}
+
+		.text-copy:nth-child(4){
+			stroke: #363636;
+			animation-delay: -4s;
+		}
+
+		.text-copy:nth-child(5){
+			stroke: #ffffff;
+			animation-delay: -5s;
+		}
+
+		@keyframes stroke-offset{
+			100% {stroke-dashoffset: -200%;}
+		}
+    </style>
+
+</head>
+
+<body>
+
+    <div class="navbar">
+		<svg viewBox="0 0 960 300">
+			<symbol id="s-text">
+			  <a xlink:href="{% url 'inicio' %}"><text text-anchor="middle" x="50%" y="80%">IDACOM</text></a>
+			</symbol>
+		  
+			<g class = "g-ants">
+			  <use xlink:href="#s-text" class="text-copy"></use>
+			  <use xlink:href="#s-text" class="text-copy"></use>
+			  <use xlink:href="#s-text" class="text-copy"></use>
+			  <use xlink:href="#s-text" class="text-copy"></use>
+			  <use xlink:href="#s-text" class="text-copy"></use>
+			</g>
+		</svg>
+	</div>
+    <br>
+    <br>
+    <br>
+
+    <div class="container-fluid" style="margin-top: 7px;">
+        
+        <div class="row" id="form-envio-html">
+            <div class="col-lg-6">
+                <div class="box-element">
+                    
+                    <hr>
+                    <h3 style="text-align:center">Detalle De La Compra</h3>
+                    <hr>
+        
+                    {% for item in items %}
+                        
+                            <div class="cart-row">
+                                <div style="flex:2"><img class="row-image" src="{{item.producto.imageURL}}"></div>
+                                <div style="flex:2"><p>{{item.producto.nombre}}</p></div>
+                                <div style="flex:1"><p>${{item.producto.precio|floatformat:2}}</p></div>
+                                <div style="flex:1"><p>x{{item.quantity}}</p></div>
+                            </div>
+                         
+                    {% endfor %}
+        
+                    <br>
+        
+                    <div class="row" id="checkout-subtotal">
+                        <div class="col" >
+                            <h5 >ITEMS: {{order.get_cart_items}}</h5>
+                            <h5 style="color: rgb(252, 214, 0);" class="currentPrice" id="currentprice" data-other="{{order.get_cart_total}}">SUBTOTAL ${{order.get_cart_total|floatformat:2}}</h5>
+                        </div>
+                    </div>
+        
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="box-element" id="hide-form">
+                    <form id="form" action="" method="POST" autocomplete="off">
+                        {% csrf_token %}
+        
+                        <div id="user-info" style="text-align:center">
+        
+                            <hr>
+                            <h3 style="text-align:center">Datos personales</h3>
+                            <hr>
+        
+                            <div class="form-field" id='nom'>
+                                {{ usuario_form.nombre }}
+                            </div>
+                            <div class="form-field">
+                                {{ usuario_form.apellido }}
+                            </div>
+                            <div class="form-field">
+                                {{ usuario_form.telefono }}
+                            </div>
+                            <div class="form-field">
+                                {{ usuario_form.email }}
+                            </div>
+        
+                        </div>
+        
+                        <div id="facturacion-info" style="text-align:center">
+        
+                            <hr>
+                                <h3 style="text-align:center">Facturacion</h3>
+                            <hr>
+        
+                            <div class="form-field">
+                                {{ usuario_form.dni_cuit }}
+                            </div>
+                            <span> <h6 style="text-align:center">DNI consumidor final / CUIT responsable inscripto</h6></span>
+        
+                        </div>
+        
+                        <div id="shipping-info" style="text-align:center">
+        
+                            <hr>
+                            <h3 style="text-align:center">Datos de Envio</h3>
+                            <hr>
+        
+                            <div class="form-field">
+                                {{ envio_form.provincia }}
+                            </div>
+                            <div class="form-field">
+                                {{ envio_form.ciudad }}
+                            </div>
+                            <div class="form-field">
+                                {{ envio_form.codigo_postal }}
+                            </div>
+                            <div class="form-field">
+                                {{ envio_form.direccion }}
+                            </div>
+        
+                        </div>
+        
+                        <br> 
+        
+                        <div id='correo'>
+                            {% if order.get_cart_total >= 4000 %}
+        
+                            <div class="box-element hidden" id="correo-oca">
+        
+                                <hr>
+                                <h3 style="text-align:center">Metodo de envio</h3>
+                                <hr>
+                                
+                                <div class="row" style="text-align:center">  
+                                    <!--
+                                    {% for correo in correos %}                
+                                    <div class="col" style="text-align: center;">
+                                        <img src="{{correo.imageURL}}" class="img-fluid">
+                                        <h6 class="correo-price">$ {{correo.precio}}</h6>
+                                        <input required type="checkbox" class='correo' data-manyselect="placement" name="{{correo.nombre}}" data-amount="{{correo.precio}}">
+                                        <label for="espatula">Seleccionar</label>
+                                    </div>
+                                    {% endfor %}
+                                    -->
+        
+                                    <div id="correo_oca" name="{{correos.0.nombre}}" data-amount="0,00">
+                                        <img src="{{correos.0.imageURL}}" class="img-fluid">
+                                        <span><h5 style="margin-top: 2px;">Delivery 5 a 7 dias habiles Gratis</h5></span>
+                                    </div>
+        
+                                </div>
+                            </div>    
+                            
+                            <div class="box-element hidden" id="correo-caba">
+        
+                                <hr>
+                                <h3 style="text-align:center">Metodo de envio</h3>
+                                <hr>
+                                
+                                <div class="row" style="text-align:center">  
+                
+                                    <div id='correo_caba' name="{{correos.1.nombre}}" data-amount="0,00">
+                                        <img src="/static/images/logo_idacom.png" id='delivery-idacom' style="width: 110px; height: 30px;" alt="">
+                                        <span><h5 style="margin-top: 2px;">Delivery 2 dias habiles Gratis</h5></span>
+                                        <h6>Despreocupate, nos ponemos en contacto y coordinamos el mejor horario.</h6>
+                                    </div>
+        
+                                </div>
+                            </div>
+        
+                            <div class="box-element hidden" id="correo-bariloche">
+        
+                                <hr>
+                                <h3 style="text-align:center">Metodo de envio</h3>
+                                <hr>
+                                
+                                <div class="row" style="text-align:center">  
+                
+                                    <div id="correo_bariloche" name="{{correos.2.nombre}}" data-amount="0,00">
+                                        <img src="/static/images/logo_idacom.png" id='delivery-idacom' style="width: 110px; height: 30px;" alt="">
+                                        <span><h5 style="margin-top: 2px;">Lo podes retirar en nuestro punto IDACOM Bariloche una vez acreditado el pago</h5></span>
+                                        <h6>Despreocupate, nos ponemos en contacto y coordinamos el mejor horario.</h6>
+                                    </div>
+        
+                                </div>
+                            </div>
+        
+                            {% else %}
+                            
+                            <div class="box-element hidden" id="correo-oca">
+        
+                                <hr>
+                                <h3 style="text-align:center">Metodo de envio</h3>
+                                <hr>
+                                
+                                <div class="row" style="text-align:center">  
+                                    <!--
+                                    {% for correo in correos %}                
+                                    <div class="col" style="text-align: center;">
+                                        <img src="{{correo.imageURL}}" class="img-fluid">
+                                        <h6 class="correo-price">$ {{correo.precio}}</h6>
+                                        <input required type="checkbox" class='correo' data-manyselect="placement" name="{{correo.nombre}}" data-amount="{{correo.precio}}">
+                                        <label for="espatula">Seleccionar</label>
+                                    </div>
+                                    {% endfor %}
+                                    -->
+        
+                                    <div id="correo_oca" name="{{correos.0.nombre}}" data-amount="{{correos.0.precio}}">
+                                        <img src="{{correos.0.imageURL}}" class="img-fluid">
+                                        <span><h5 style="margin-top: 2px;">Delivery 5 a 7 dias habiles ${{correos.0.precio}}</h5></span>
+                                    </div>
+        
+                                </div>
+                            </div>    
+                            
+                            <div class="box-element hidden" id="correo-caba">
+        
+                                <hr>
+                                <h3 style="text-align:center">Metodo de envio</h3>
+                                <hr>
+                                
+                                <div class="row" style="text-align:center">  
+                
+                                    <div id='correo_caba' name="{{correos.1.nombre}}" data-amount="{{correos.1.precio}}">
+                                        <img src="/static/images/logo_idacom.png" id='delivery-idacom' style="width: 110px; height: 30px;" alt="">
+                                        <span><h5 style="margin-top: 2px;">Delivery 2 dias habiles ${{correos.1.precio}}</h5></span>
+                                        <h6>Despreocupate, nos ponemos en contacto y coordinamos el mejor horario.</h6>
+                                    </div>
+        
+                                </div>
+                            </div>
+        
+                            <div class="box-element hidden" id="correo-bariloche">
+        
+                                <hr>
+                                <h3 style="text-align:center">Metodo de envio</h3>
+                                <hr>
+                                
+                                <div class="row" style="text-align:center">  
+                
+                                    <div id="correo_bariloche" name="{{correos.2.nombre}}" data-amount="{{correos.2.precio}}">
+                                        <img src="/static/images/logo_idacom.png" id='delivery-idacom' style="width: 110px; height: 30px;" alt="">
+                                        <span><h5 style="margin-top: 2px;">Lo podes retirar en nuestro punto IDACOM Bariloche una vez acreditado el pago</h5></span>
+                                        <h6>Despreocupate, nos ponemos en contacto y coordinamos el mejor horario.</h6>
+                                    </div>
+        
+                                </div>
+                            </div>
+                            {% endif %} 
+                        </div>
+        
+                        <div>
+                            {% if order.get_cart_total > 0 %}
+                            <button id="form-button" class="c-button c-button--gooey" type="submit" style=" background-color: rgba(0, 122, 0, 0.568); width: 100%; outline-style: none;" form="form">
+                                PROCEDER AL PAGO
+                                <div class="c-button__blobs">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </button>
+                            {% else %}
+                            <button id="form-button" class="c-button c-button--gooey" type="submit" style=" background-color: rgba(0, 122, 0, 0.568); width: 100%; outline-style: none;" form="form" disabled>
+                                PROCEDER AL PAGO
+                                <div class="c-button__blobs">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </button>
+                            {% endif %}
+                        </div>
+        
+                    </form>
+                </div>
+                
+                <div class="box-element hidden" id="info">
+        
+                    <button id="personal-info" class="c-button c-button--gooey" onclick="personal_info()" style=" background-color: rgba(175, 47, 25, 0.568); width: 100%; height: 80px; outline-style: none;" >
+                        INFORMACION PERSONAL <br><p style="font-size:11px; color: whitesmoke;">Editar</p>
+                        <div class="c-button__blobs">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </button>
+                    <br>
+                    
+                    <button id="prisma-btn" class="c-button c-button--gooey" onclick="prisma()" style=" background-color: rgba(255, 187, 0, 0.568); width: 100%; height: 80px; outline-style: none;" >
+                        CREDITO o DEBITO
+                        <div class="c-button__blobs">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </button>
+        
+                    <br>
+        
+                    <div style="display: none;" id="prisma-tarjeta">
+                        <form id="formCardDecidir" autocomplete="off">
+                            {% csrf_token %}
+            
+                            <div id="tarjeta-info" style="text-align: center;">
+        
+                                <hr>
+                                    <h5>PRISMA MEDIO DE PAGOS</h5>
+                                    <h6>Datos tal cual aparecen en la tarjeta</h6>
+                                <hr>
+        
+                                <div class="form-field">
+                                    {{ card_decidir_form.numero_tarjeta }}
+                                </div>
+                                <div class="form-field">
+                                    {{ card_decidir_form.nombre_titular }}
+                                </div>
+                                <div class="form-field">
+                                    {{ card_decidir_form.mes_vencimiento }}
+                                </div>
+                                <div class="form-field">
+                                    {{ card_decidir_form.año_vencimiento }}
+                                </div>
+                                <div class="form-field">
+                                    {{ card_decidir_form.codigo_seguridad }}
+                                </div>
+                                <div class="form-field">
+                                    {{ card_decidir_form.numero_documento }}
+                                </div>
+                                <div class="form-field">
+                                    {{ card_decidir_form.cuotas }}
+                                </div>        
+                            </div>
+            
+                            <br>
+            
+                            
+                            <button id="form-tarjeta" class="c-button c-button--gooey" type="submit" style=" background-color: rgba(0, 122, 0, 0.568); width: 100%; outline-style: none;" form="formCardDecidir">
+                                REALIZAR PAGO
+                                <div class="c-button__blobs">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </button>
+                            
+                        </form>
+                    <br>
+                    </div>
+        
+                    <button id="mercado-btn" class="c-button c-button--gooey" onclick="mercado()" style=" background-color: rgba(0, 140, 255, 0.568); width: 100%; height: 80px; outline-style: none;" >
+                        EFECTIVO
+                        <div class="c-button__blobs">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </button>
+                    <br>
+        
+                    <div style="display: none;" id="mercadopago-tarjeta">
+                        <br>
+                        <div class="cho-container">
+                            
+                        </div>
+                        
+                    </div>
+                </div>        
+            </div>
+        
+        </div>
+        <div class="box-element hidden" id='loading' style="margin-top: 100px; margin-bottom: 100px;">
+            <!-- Designed with Figma -->
+            <div class="row" style="align-items: center; justify-content: center; text-align: center;">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g id="study">
+                <rect width="64" height="64"/>
+                <g id="smoke">
+                <path id="smoke-2" d="M9 21L9.55279 19.8944C9.83431 19.3314 9.83431 18.6686 9.55279 18.1056L9 17L8.44721 15.8944C8.16569 15.3314 8.16569 14.6686 8.44721 14.1056L9 13" stroke="#797270"/>
+                <path id="smoke-1" d="M6.5 22L7.05279 20.8944C7.33431 20.3314 7.33431 19.6686 7.05279 19.1056L6.5 18L5.94721 16.8944C5.66569 16.3314 5.66569 15.6686 5.94721 15.1056L6.5 14" stroke="#797270"/>
+                </g>
+                <g id="laptop">
+                <rect id="laptop-base" x="17" y="28" width="20" height="3" fill="#F3F3F3" stroke="#453F3C" stroke-width="2"/>
+                <rect id="laptop-screen" x="18" y="17" width="18" height="11" fill="#E7E6EA" stroke="#453F3C" stroke-width="2"/>
+                <rect id="line-1" x="20" y="19" width="14" height="1" fill="#F78764"/>
+                <rect id="line-2" x="20" y="21" width="14" height="1" fill="#F9AB82"/>
+                <rect id="line-3" x="20" y="23" width="14" height="1" fill="#F78764"/>
+                <rect id="line-4" x="20" y="25" width="14" height="1" fill="#F9AB82"/>
+                </g>
+                <g id="cup">
+                <rect id="Rectangle 978" x="5" y="24" width="5" height="7" fill="#CCC4C4" stroke="#453F3C" stroke-width="2"/>
+                <path id="Ellipse 416" d="M11 28C12.1046 28 13 27.1046 13 26C13 24.8954 12.1046 24 11 24" stroke="#453F3C" stroke-width="2"/>
+                <rect id="Rectangle 996" x="6" y="25" width="3" height="1" fill="#D6D2D1"/>
+                </g>
+                <g id="books">
+                <rect id="Rectangle 984" x="58" y="27" width="4" height="14" transform="rotate(90 58 27)" fill="#B16B4F" stroke="#453F3C" stroke-width="2"/>
+                <rect id="Rectangle 985" x="56" y="23" width="4" height="14" transform="rotate(90 56 23)" fill="#797270" stroke="#453F3C" stroke-width="2"/>
+                <rect id="Rectangle 986" x="60" y="19" width="4" height="14" transform="rotate(90 60 19)" fill="#F78764" stroke="#453F3C" stroke-width="2"/>
+                <rect id="Rectangle 993" x="47" y="20" width="12" height="1" fill="#F9AB82"/>
+                <rect id="Rectangle 994" x="43" y="24" width="12" height="1" fill="#54504E"/>
+                <rect id="Rectangle 995" x="45" y="28" width="12" height="1" fill="#804D39"/>
+                </g>
+                <g id="desk">
+                <rect id="Rectangle 973" x="4" y="31" width="56" height="5" fill="#797270" stroke="#453F3C" stroke-width="2"/>
+                <rect id="Rectangle 987" x="10" y="36" width="30" height="6" fill="#797270" stroke="#453F3C" stroke-width="2"/>
+                <rect id="Rectangle 975" x="6" y="36" width="4" height="24" fill="#797270" stroke="#453F3C" stroke-width="2"/>
+                <rect id="Rectangle 974" x="40" y="36" width="18" height="24" fill="#797270" stroke="#453F3C" stroke-width="2"/>
+                <line id="Line 129" x1="40" y1="48" x2="58" y2="48" stroke="#453F3C" stroke-width="2"/>
+                <line id="Line 130" x1="22" y1="39" x2="28" y2="39" stroke="#453F3C" stroke-width="2"/>
+                <line id="Line 142" x1="46" y1="42" x2="52" y2="42" stroke="#453F3C" stroke-width="2"/>
+                <line id="Line 131" x1="46" y1="54" x2="52" y2="54" stroke="#453F3C" stroke-width="2"/>
+                <rect id="Rectangle 988" x="11" y="37" width="28" height="1" fill="#54504E"/>
+                <rect id="Rectangle 992" x="5" y="32" width="54" height="1" fill="#9E9492"/>
+                <rect id="Rectangle 989" x="7" y="37" width="2" height="1" fill="#54504E"/>
+                <rect id="Rectangle 990" x="41" y="37" width="16" height="1" fill="#54504E"/>
+                <rect id="Rectangle 991" x="41" y="49" width="16" height="1" fill="#54504E"/>
+                <line id="Line 143" y1="60" x2="64" y2="60" stroke="#453F3C" stroke-width="2"/>
+                </g>
+                </g>
+                </svg>
+            </div>
+            <div class="row" style="align-items: center; justify-content: center;">
+                <h3>PROCESANDO ORDEN</h3>
+            </div>
+        </div>
+        
+        
+                
+    </div>
+
+    <div class="footer justify-content-center">
+        <div>
+            <a href="#"><img src="/static/images/instagram_icon.png" id='instagram_icon'></a>
+            <a href="#"><img src="/static/images/facebook_icon.png" id='facebook_icon'></a>
+            <a href="#"><img src="/static/images/youtube_icon.png" id='youtube_icon'></a>
+        </div>
+        <br>
+        <h5>©2021 IDACOM Worldwide — Todos los derechos reservados</h5>
+
+    </div>
+
+    
+    <!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>-->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+
+    <script type="text/javascript" src="{% static 'js/cart.js' %}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.all.min.js"></script>
+
+    <script type="text/javascript" src="{% static 'js/envio.js' %}"></script>
+
+</body>
+
+</html>

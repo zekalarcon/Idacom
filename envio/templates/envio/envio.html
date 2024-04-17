@@ -1,0 +1,565 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load compra_tags %}
+
+    <style>
+        #row-checkout{
+            margin-top: 30px;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        #wrapper-finalizar-compra{
+            max-width: 600px;
+            margin: 50px auto 50px;
+            text-align: center;
+            position: relative;
+        }
+
+        #checkout-subtotal-envio{
+            margin-top: 96px;
+        }
+
+        #user-info{
+            display: flex; 
+            justify-content: space-evenly;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media only screen and (max-width: 1000px),
+        (min-device-width: 700px) and (max-device-width: 1024px){
+                
+            #checkout-subtotal-envio{
+                margin-top: 0px;
+            }
+
+            #user-info{
+                display: inherit;
+                width: 100%;
+            }
+            
+        }
+
+        @media only screen and (max-width: 999px),
+	    (min-device-width: 448px) and (max-device-width: 999px){
+
+            #checkout-subtotal-envio{
+                margin-top: 0px;
+            }
+
+        }
+
+        
+        @media only screen and (max-width: 448px),
+	    (min-device-width: 200px) and (max-device-width: 448px){
+
+            #checkout-subtotal-envio{
+                margin-top: 0px;
+            }
+
+        }
+
+    </style>
+    <div id="cart-view-wrapper">
+        <div class="row" id="row-checkout">
+
+            <div id="checkout-subtotal-envio" class="col-lg-5">
+                                
+                <div class="col" id="col-subtotal">
+                        
+                    <p style="font-weight: 900; color: black;">ITEMS: <span id="compra-subtotal">{{order.get_cart_items}}</span><p>
+                            
+                    {% if order.total_check >= 9000 %}
+                        
+                        <p id="p-tag"> 
+                            <span style="color: rgb(0, 0, 0); font-weight: 900;" id="currentSubtotal" data-other="{{order.get_cart_total}}">SUBTOTAL:</span>
+                            <span id="compra-subtotal">${{order.get_cart_total|floatformat:0}}</span> 
+                            <span style="color: rgb(34 228 16); font-weight: 900;">10% OFF</span> 
+                            <span  style="font-weight: 900; margin-left: 10px;">ANTES</span>
+                            <span id="precio-tachado-tabla" style="color:rgb(187, 27, 27); font-weight: 900; font-family: 'Roboto', sans-serif;">${{order.total_check|floatformat:0}}</span>
+                        </p>
+                        <p id="total-interest" style="display: block;"></p>
+                        <p style="font-weight: 900; color: rgb(34 228 16);">ENVIO GRATIS</p>
+                
+                    {% else %}
+                    <p>
+                        <span style="color: rgb(0, 0, 0);font-weight: 900;" id="currentSubtotal" data-other="{{order.get_cart_total}}">SUBTOTAL: </span>
+                        <span id="currentPrice" style="font-family: 'Roboto', sans-serif;">${{order.get_cart_total|floatformat:0}}</span>
+                    </p>
+
+                        {% if order.total_check >= 4000 or order.total_check_especial >= 4000 %}
+                            <p style="font-weight: 900; color: rgb(34 228 16)">ENVIO GRATIS</p>
+                        {% else %}
+                            <p style="font-weight: 900; color:rgb(187, 27, 27);" id="envio-else">MAS GASTOS DE ENVIO</p>
+                        {% endif %}
+
+                    {% endif %}
+                
+                </div>
+    
+                <div class="col" >
+                    <a href="{% url 'productos' %}" class="c-button c-button--gooey ml-auto" style="background-color: rgba(110, 107, 107, 0.89); outline-style: none;">
+                        SEGUIR COMPRANDO
+                        <div class="c-button__blobs">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </a>
+                    <a href="{% url 'carrito' %}" class="c-button c-button--gooey ml-auto" style="background-color: rgba(110, 107, 107, 0.89); outline-style: none;">
+                        VOLVER AL CARRITO
+                        <div class="c-button__blobs">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </a>
+                </div>
+                
+            </div> 
+
+            <div id="wrapper-finalizar-compra" class="col-lg-7">
+
+                <div class="progress-container">
+                    <div class="progress" id="progress"></div>
+                    <div class="circle active"><i class="fa fa-shopping-cart" aria-hidden="true"></i></div>
+                    <div class="circle"><i class="fa fa-user" aria-hidden="true"></i></div>
+                    <div class="circle"><i class="fa fa-truck" aria-hidden="true"></i></div>
+                    <div class="circle"><i class="fa fa-credit-card" aria-hidden="true"></i></div>
+                </div>
+
+                <div class="box-element" id="detalle-compra">
+
+                    <div id="wrapper-items">
+                        <h6 style="text-align:center; font-weight: 900; margin-top: -13px;">ITEMS</h6>
+                        <div id="items-loop">        
+                        {% for item in items %}
+                    
+                            <div class="cart-row" style="text-align: center; align-items: center; font-weight: 900; color: rgba(0, 0, 0, 0.9);">
+                                <div style="flex:2"><a href="{% url 'detail' item.producto.slug %}"><img class="row-image" src="{{item.producto.imageURL}}"></a></div>
+                                <div style="flex:2"><p>{{item.producto.nombre}}</p></div>
+                                                                    
+                                {% if item.producto.precio_descuento == 0 %}
+                                    {% if item.producto.especial == True %}
+                                        {% if item.producto.precio_tachado != 0 %}
+                                            <div style="flex:1" id="precios-tabla"><p id="precio-tabla-compra">${{item.producto.precio|floatformat:0}}<br><span id="precio-tachado-tabla" style="color:rgb(187, 27, 27);">${{item.producto.precio_tachado|floatformat:0}}</span></p></div> 
+                                        {% else %}
+                                            <div style="flex:1" id="precios-tabla"><p id="precio-tabla-compra">${{item.producto.precio|floatformat:0}}</p></div>
+                                        {% endif %}
+                                    {% elif producto.precio >= 9000 or order.total_check >= 9000 %}
+                                        <div style="flex:1" id="precios-tabla"><span style="color: rgb(34 228 16); font-weight: 900;">10% OFF</span><p id="precio-tabla-compra">${% percentage 10 item.producto.precio %}<br><span id="precio-tachado-tabla" style="color:rgb(187, 27, 27);">${{item.producto.precio|floatformat:0}}</span></p></div>
+                                    {% else %}
+                                        <div style="flex:1" id="precios-tabla"><p id="precio-tabla-compra">${{item.producto.precio|floatformat:0}}</p></div>
+                                    {% endif %}
+                                
+                                {% else  %}
+                                    {% if item.producto.especial == True %}                     
+                                        {% if item.producto.precio_tachado != 0 %}
+                                            <div style="flex:1" id="precios-tabla"><p id="precio-tabla-compra">${{item.producto.precio|floatformat:0}}<br><span id="precio-tachado-tabla" style="color:rgb(187, 27, 27);">${{item.producto.precio_tachado|floatformat:0}}</span></p></div> 
+                                        {% else %}
+                                            <div style="flex:1" id="precios-tabla"><p id="precio-tabla-compra">${{item.producto.precio|floatformat:0}}</p></div>
+                                        {% endif %}
+                                    {% elif producto.precio >= 9000 or order.total_check >= 9000 %}
+                                        {% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+                                            <div style="flex:1" id="precios-tabla"><span style="color: rgb(34 228 16); font-weight: 900;">10% OFF</span><p id="precio-tabla-compra">${% percentage 10 item.producto.precio_descuento %}<br><span id="precio-tachado-tabla" style="color:rgb(187, 27, 27);">${{item.producto.precio_descuento|floatformat:0}}</span></p></div>
+                                        {% else %}
+                                            <div style="flex:1" id="precios-tabla"><span style="color: rgb(34 228 16); font-weight: 900;">10% OFF</span><p id="precio-tabla-compra">${% percentage 10 item.producto.precio %}<br><span id="precio-tachado-tabla" style="color:rgb(187, 27, 27);">${{item.producto.precio|floatformat:0}}</span></p></div>
+                                        {% endif %}
+                                
+                                    {% else %}
+                                        {% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+                                            <div style="flex:1" id="precios-tabla"><p id="precio-tabla-compra">${{item.producto.precio_descuento|floatformat:0}}<br><span id="precio-tachado-tabla" style="color:rgb(187, 27, 27);">${{item.producto.precio|floatformat:0}}</span></p></div>
+                                        {% else %}
+                                            <div style="flex:1" id="precios-tabla"><p id="precio-tabla-compra">${{item.producto.precio|floatformat:0}}<br><span id="precio-tachado-tabla" style="color:rgb(187, 27, 27);">${{item.producto.precio_descuento|floatformat:0}}</span></p></div>
+                                        {% endif %}
+                                    {% endif %}
+                                
+                                {% endif %}
+
+                                <div style="flex:1"><p>x{{item.quantity}}</p></div>
+                        </div>
+                    
+                        {% endfor %}
+                        </div> 
+                            
+                        <div>
+                            <button type="button" class="c-button c-button--gooey" onclick="siguiente()" style=" background-color: rgba(0, 0, 0, 0.822); outline-style: none;" >
+                                SIGUIENTE
+                                <div class="c-button__blobs">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="box-element hidden doFadeIn" id="datos-personales"  >
+                    <div id="wrapper-datos-personales">
+                        <form id="form-datos-personales" action="" method="POST" autocomplete="off">
+                            {% csrf_token %}
+
+                            <h6 style="font-weight: 900; margin-top: -13px;">DATOS PERSONALES</h6>   
+
+                            <div id="user-info" >           
+                                
+                                <input id="id_nombre" placeholder="Nombre" type="text" minlength="2" pattern='^[A-Za-z\s]+$' title='Solo letras' name="nameFake" style="display: none;">
+                                <input id="id_nombre" placeholder="Nombre" type="search" minlength="2" pattern='^[A-Za-z\s]+$' title='Solo letras' name="name" required autocomplete="new-name">
+                                <input id="id_apellido" placeholder="Apellido" type="text" minlength="2" pattern='^[A-Za-z\s]+$' title='Solo letras' name="last_nameFake" style="display: none;">
+                                <input id="id_apellido" placeholder="Apellido" type="search" minlength="2" pattern='^[A-Za-z\s]+$' title='Solo letras' name="last_name" required autocomplete="new-last-name">
+                                <input id="id_telefono" placeholder="Telefono" type="number" minlength="10" pattern='^(1|2|3)([0-9])+$' title='C.Area sin 0 + Tel. sin 15' name="phoneFake" style="display: none;">
+                                <input id="id_telefono" placeholder="Telefono" type="number" minlength="10" pattern='^(1|2|3)([0-9])+$' title='C.Area sin 0 + Tel. sin 15' name="phone" required autocomplete="new-phone">
+                                <input id="email-checkout" placeholder="Correo electronico" type="email" name="email" required autocomplete="new-email">
+                                
+                            </div>
+                            
+                            <div style="text-align:center">
+                                <input id="id_dni_cuit" placeholder="DNI o CUIT" type="text" minlength="7" maxlength="11" pattern='^[0-9-]+$' title='DNI o CUIT' name="dni_cuit" required>              
+                                <span> <p style="text-align:center; font-size: 13px;">DNI consumidor final / CUIT responsable inscripto</p></span>
+                            </div>
+
+                            <input type="hidden" name="g-recaptcha-response" id='recaptcha'>
+
+
+                            <div>
+                                <button type="button" class="c-button c-button--gooey" onclick="anterior()" style=" background-color: rgba(110, 107, 107, 0.89); outline-style: none;" >
+                                    ANTERIOR
+                                    <div class="c-button__blobs">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </button>
+                                <button type="submit" class="c-button c-button--gooey" style=" background-color: rgba(0, 0, 0, 0.822); outline-style: none;" >
+                                    SIGUIENTE
+                                    <div class="c-button__blobs">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </button>
+                            </div>
+
+                        </form>  
+                    </div> 
+                </div>
+
+                <div class="box-element hidden doFadeIn" id="datos-envio" >
+                    <div id="wrapper-datos-envio">
+                        <form id="form-datos-envio" action="" method="POST" autocomplete="off">
+                            {% csrf_token %}
+
+                            <div id="shipping-info" style="text-align:center">
+
+                                <h6 style="text-align:center; font-weight: 900; margin-top: -13px;">DATOS DE ENVIO</h6>
+
+                                <div style="text-align:center;">
+                                    
+                                    <input id="address" type="text" maxlength="80" value="" placeholder="Ingresa y elegi tu direccion" required style="display: inline;"/>
+                                    <input id="floor" type="text" maxlength="3" value="" placeholder="Piso" style="display: inline; text-align: center;">
+                                    
+                                </div>
+
+                                <div id="block_container">
+                                    <div>
+                                        <input id="zip-code" type="text" maxlength="4" value="" placeholder="CP" style="display: none;"/>                                   
+                                    </div>
+                                    <div>
+                                        {{ envio_form.indicaciones }}
+                                    </div>
+                                </div>
+                                
+
+                                <div id="mapa"></div>
+                                <div id="infowindow-content">
+                                    <span id="place-name" class="title"></span><br />
+                                    <span id="place-address"></span>
+                                </div>
+                        
+
+                            </div>
+
+                            <br> 
+
+                            <div id='correo'>
+                                {% if order.get_cart_total >= 4000 %}
+
+                                <div class="box-element hidden" id="correo-oca">
+                                    
+                                    <div class="row" style="text-align:center">  
+                                    
+                                        <div id="correo_oca" name="{{correos.0.nombre}}" data-amount="0,00">
+                                            <img src="{{correos.0.imageURL}}" class="img-fluid" style="width: 100px;">
+                                            <span><p style="margin-top: 2px; font-size: 15px;">Delivery 5 a 7 dias habiles Gratis</p></span>
+                                        </div>
+
+                                    </div>
+                                </div>    
+                                
+                                <div class="box-element hidden" id="correo-caba">
+                                    
+                                    <div class="row" style="text-align:center">  
+                    
+                                        <div id='correo_caba' name="{{correos.1.nombre}}" data-amount="0,00">
+                                            <img src="/static/images/logo_idacom.png" id='delivery-idacom' style="width: 110px; height: 30px;" alt="">
+                                            <span><p style="margin-top: 2px; font-size: 15px;">Delivery 2 dias habiles Gratis</p></span>
+                                            <p style="font-size: 15px;">Despreocupate, nos ponemos en contacto y coordinamos el mejor horario.</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="box-element hidden" id="correo-bariloche">
+                                    
+                                    <div class="row" style="text-align:center">  
+                    
+                                        <div id="correo_bariloche" name="{{correos.2.nombre}}" data-amount="0,00">
+                                            <img src="/static/images/logo_idacom.png" id='delivery-idacom' style="width: 110px; height: 30px;" alt="">
+                                            <span><p style="margin-top: 2px; font-size: 15px;">Lo podes retirar en nuestro punto IDACOM Bariloche una vez acreditado el pago</p></span>
+                                            <p style="font-size: 15px;">Despreocupate, nos ponemos en contacto y coordinamos el mejor horario.</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                {% else %}
+                                
+                                <div class="box-element hidden" id="correo-oca">
+                                    
+                                    <div class="row" style="text-align:center">  
+
+                                        <div id="correo_oca" name="{{correos.0.nombre}}" data-amount="{{correos.0.precio}}">
+                                            <img src="{{correos.0.imageURL}}" class="img-fluid" style="width: 100px;">
+                                            <span><p style="margin-top: 2px; font-size: 15px;">Delivery 5 a 7 dias habiles ${{correos.0.precio}}</p></span>
+                                        </div>
+
+                                    </div>
+                                </div>    
+                                
+                                <div class="box-element hidden" id="correo-caba">
+                                    
+                                    <div class="row" style="text-align:center">  
+                    
+                                        <div id='correo_caba' name="{{correos.1.nombre}}" data-amount="{{correos.1.precio}}">
+                                            <img src="/static/images/logo_idacom.png" id='delivery-idacom' style="width: 110px; height: 30px;" alt="">
+                                            <span><p style="margin-top: 2px; font-size: 15px;">Delivery 2 dias habiles ${{correos.1.precio}}</p></span>
+                                            <p style="font-size: 15px;">Despreocupate, nos ponemos en contacto y coordinamos el mejor horario.</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="box-element hidden" id="correo-bariloche">
+                                    
+                                    <div class="row" style="text-align:center">  
+                    
+                                        <div id="correo_bariloche" name="{{correos.2.nombre}}" data-amount="{{correos.2.precio}}">
+                                            <img src="/static/images/logo_idacom.png" id='delivery-idacom' style="width: 110px; height: 30px;" alt="">
+                                            <span><p style="margin-top: 2px; font-size: 15px;">Lo podes retirar en nuestro punto IDACOM Bariloche una vez acreditado el pago</p></span>
+                                            <p style="font-size: 15px;">Despreocupate, nos ponemos en contacto y coordinamos el mejor horario.</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                {% endif %} 
+                            </div>
+
+                            <div id="row-button-datos-envio">
+                                <button type="button" class="c-button c-button--gooey" onclick="anterior()" style=" background-color: rgba(110, 107, 107, 0.89); outline-style: none;" >
+                                    ANTERIOR
+                                    <div class="c-button__blobs">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </button>
+                                <button id="button-seguir-envio" type="submit" class="c-button c-button--gooey" style=" background-color: rgba(0, 0, 0, 0.822); outline-style: none;" disabled >
+                                    SIGUIENTE
+                                    <div class="c-button__blobs">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+                <div class="box-element hidden doFadeIn" id="datos-pago">
+                    <div id="wrapper-pago">
+
+                        <h6 style="text-align:center; font-weight: 900; margin-top: -13px;">REALIZA TU PAGO</h6>
+                        
+                        <button id="prisma-btn" class="c-button c-button--gooey" onclick="prisma()" style=" background-color: rgba(226, 0, 38, 0.57); width: 100%; outline-style: none;" >
+                            CREDITO o DEBITO
+                            <div class="c-button__blobs">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </button>
+
+                        <br>
+                        <div id="wrapper-prisma-mp">
+                            <div style="display: none;" id="prisma-tarjeta">
+                
+                                <div id="tarjeta-info" style="text-align: center;">
+
+                                    <img src="/static/images/prisma_logo.png" style="width: 20px;" alt=""><span id="title-prisma">PRISMA MEDIO DE PAGOS</span>
+
+                                    <form id="form-card-decidir" action="" method="POST" autocomplete="off">
+                                        {% csrf_token %}
+
+                                        <div class='card-wrapper'></div>
+
+                                        <div id="fields-card">
+                                            <input id="id_number" placeholder="Numero tarjeta" type="tel" name="number">
+                                            <input id="id_name" placeholder="Nombre completo" type="text" name="name">
+                                            <input maxlength="7" id="id_expiry" placeholder="Vcto" type="tel" name="expiry">
+                                            <input id="id_cvc" placeholder="CVC" type="number" name="cvc">
+
+                                            
+                                            <div class="form-field">
+                                                {{ card_decidir_form.numero_documento }}
+                                            </div>
+                                            <div class="form-field" style="width: 70px;">
+                                                {{ card_decidir_form.cuotas }}
+                                            </div>    
+                                            
+                                            <button class="c-button c-button--gooey" type="submit" style=" background-color: rgba(0, 122, 0, 0.568); outline-style: none;">
+                                                REALIZAR PAGO
+                                                <div class="c-button__blobs">
+                                                    <div></div>
+                                                    <div></div>
+                                                    <div></div>
+                                                </div>
+                                            </button>
+
+                                        </div>
+
+                                    </form>
+                                </div>                   
+                                
+                            </div>
+                            
+                            <button id="mercado-btn" class="c-button c-button--gooey" onclick="mercado()" style=" background-color: rgba(0, 140, 255, 0.568); width: 100%;outline-style: none;" >
+                                EFECTIVO
+                                <div class="c-button__blobs">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </button>
+
+                            <br>
+
+                            <div style="display: none;" id="mercadopago-tarjeta">
+                                
+                                <div class="cho-container" id="contenedor-mp"></div>
+                                    
+                            </div>
+                        </div>
+                        <br>
+                        <div style="margin-top: -20px;">
+                            <button type="button" class="c-button c-button--gooey" onclick="anterior()" style=" background-color: rgba(110, 107, 107, 0.89); outline-style: none;" >
+                                ANTERIOR
+                                <div class="c-button__blobs">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+    <div class="box-element hidden" id='loading' style="margin-top: 100px; margin-bottom: 100px;">
+        <!-- Designed with Figma -->
+        <div class="row" style="align-items: center; justify-content: center; text-align: center;">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="study">
+            <rect width="64" height="64"/>
+            <g id="smoke">
+            <path id="smoke-2" d="M9 21L9.55279 19.8944C9.83431 19.3314 9.83431 18.6686 9.55279 18.1056L9 17L8.44721 15.8944C8.16569 15.3314 8.16569 14.6686 8.44721 14.1056L9 13" stroke="#797270"/>
+            <path id="smoke-1" d="M6.5 22L7.05279 20.8944C7.33431 20.3314 7.33431 19.6686 7.05279 19.1056L6.5 18L5.94721 16.8944C5.66569 16.3314 5.66569 15.6686 5.94721 15.1056L6.5 14" stroke="#797270"/>
+            </g>
+            <g id="laptop">
+            <rect id="laptop-base" x="17" y="28" width="20" height="3" fill="#F3F3F3" stroke="#453F3C" stroke-width="2"/>
+            <rect id="laptop-screen" x="18" y="17" width="18" height="11" fill="#E7E6EA" stroke="#453F3C" stroke-width="2"/>
+            <rect id="line-1" x="20" y="19" width="14" height="1" fill="#F78764"/>
+            <rect id="line-2" x="20" y="21" width="14" height="1" fill="#F9AB82"/>
+            <rect id="line-3" x="20" y="23" width="14" height="1" fill="#F78764"/>
+            <rect id="line-4" x="20" y="25" width="14" height="1" fill="#F9AB82"/>
+            </g>
+            <g id="cup">
+            <rect id="Rectangle 978" x="5" y="24" width="5" height="7" fill="#CCC4C4" stroke="#453F3C" stroke-width="2"/>
+            <path id="Ellipse 416" d="M11 28C12.1046 28 13 27.1046 13 26C13 24.8954 12.1046 24 11 24" stroke="#453F3C" stroke-width="2"/>
+            <rect id="Rectangle 996" x="6" y="25" width="3" height="1" fill="#D6D2D1"/>
+            </g>
+            <g id="books">
+            <rect id="Rectangle 984" x="58" y="27" width="4" height="14" transform="rotate(90 58 27)" fill="#B16B4F" stroke="#453F3C" stroke-width="2"/>
+            <rect id="Rectangle 985" x="56" y="23" width="4" height="14" transform="rotate(90 56 23)" fill="#797270" stroke="#453F3C" stroke-width="2"/>
+            <rect id="Rectangle 986" x="60" y="19" width="4" height="14" transform="rotate(90 60 19)" fill="#F78764" stroke="#453F3C" stroke-width="2"/>
+            <rect id="Rectangle 993" x="47" y="20" width="12" height="1" fill="#F9AB82"/>
+            <rect id="Rectangle 994" x="43" y="24" width="12" height="1" fill="#54504E"/>
+            <rect id="Rectangle 995" x="45" y="28" width="12" height="1" fill="#804D39"/>
+            </g>
+            <g id="desk">
+            <rect id="Rectangle 973" x="4" y="31" width="56" height="5" fill="#797270" stroke="#453F3C" stroke-width="2"/>
+            <rect id="Rectangle 987" x="10" y="36" width="30" height="6" fill="#797270" stroke="#453F3C" stroke-width="2"/>
+            <rect id="Rectangle 975" x="6" y="36" width="4" height="24" fill="#797270" stroke="#453F3C" stroke-width="2"/>
+            <rect id="Rectangle 974" x="40" y="36" width="18" height="24" fill="#797270" stroke="#453F3C" stroke-width="2"/>
+            <line id="Line 129" x1="40" y1="48" x2="58" y2="48" stroke="#453F3C" stroke-width="2"/>
+            <line id="Line 130" x1="22" y1="39" x2="28" y2="39" stroke="#453F3C" stroke-width="2"/>
+            <line id="Line 142" x1="46" y1="42" x2="52" y2="42" stroke="#453F3C" stroke-width="2"/>
+            <line id="Line 131" x1="46" y1="54" x2="52" y2="54" stroke="#453F3C" stroke-width="2"/>
+            <rect id="Rectangle 988" x="11" y="37" width="28" height="1" fill="#54504E"/>
+            <rect id="Rectangle 992" x="5" y="32" width="54" height="1" fill="#9E9492"/>
+            <rect id="Rectangle 989" x="7" y="37" width="2" height="1" fill="#54504E"/>
+            <rect id="Rectangle 990" x="41" y="37" width="16" height="1" fill="#54504E"/>
+            <rect id="Rectangle 991" x="41" y="49" width="16" height="1" fill="#54504E"/>
+            <line id="Line 143" y1="60" x2="64" y2="60" stroke="#453F3C" stroke-width="2"/>
+            </g>
+            </g>
+            </svg>
+        </div>
+        <div class="row" style="align-items: center; justify-content: center;">
+            <h3>PROCESANDO ORDEN</h3>
+        </div>
+    </div>
+
+
+    <p class="label-home-menubar" id="changeText">Envio gratis en ordenes superiores a $4000</p>
+    <p id="intereses" data-other="{{intereses}}" style="display: none;"></p>
+    <p id="total_check" data-other="{{order.total_check}}" style="display: none;">
+    {{ recaptcha_site_key|json_script:"site_key" }}
+
+    <script type="text/javascript" src="{% static 'js/jquery.card.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/envio.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.all.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/bannerSuperior.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            document.title = 'Checkout IDACOM';
+        });   
+
+        
+    </script>
+
+{% endblock content %}

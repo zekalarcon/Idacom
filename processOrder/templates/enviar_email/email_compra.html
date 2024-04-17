@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load inlinecss %}
+   
+    <body style="background-color: whitesmoke;">
+        <div class="container">
+
+            <div style="background-color: #1d1f1d;">
+                
+                <a href="http://www.industriadeacero.com"><img style="display: block; margin-right: auto; margin-left: auto; margin-top: 20px; margin-bottom: 20px; width: 50%; height: 50%;" src="cid:logo_idacom_email.png" alt=""></a>
+    
+            </div>
+
+           
+            <div>
+                <h2 style="text-align: center; color: black; font-weight: 900;">GRACIAS POR TU COMPRA</h2>
+
+                {% if usuario == FALSE %}
+
+                    <h4 style="font-weight: 900;">
+                        DATOS DE INGRESO
+                    </h4>
+                    <h5 style="font-weight: 900;">
+                        <span style="color: green;">USUARIO:</span> {{ email_cliente }}
+                        <span style="color: rgb(236, 67, 0);">CONTRASEÑA:</span> {{ contra }}
+                    </h5>
+                
+                {% else %}
+
+                {% endif %}
+
+                {% for producto in items %}
+
+                    <div style="text-align: center; font-weight: 900;">
+                        <div style="flex:2; color: rgb(48, 0, 87);"><p>{{producto.producto.nombre}}</p></div>  
+                        <div style="flex:1; color: black;"><p>x{{producto.quantity}}</p></div>
+                    </div>
+
+                {% endfor %}
+
+                <div>
+                    <h5 style="text-align: center; font-weight: 900;">TOTAL: ${{total|floatformat:0}}</h5>
+                </div>
+            
+                {% if correo_nombre == 'OCA' %}
+                    <h4 style="text-align: center;">NUMERO DE SEGUIMIENTO OCA: {{ numero_envio }}</h4> 
+                    <a style="text-align: center;" href="https://www.oca.com.ar/Seguimiento/BuscarEnvio/paquetes/{{ numero_envio }}"><h5>CONSULTA EL ESTADO</h5></a>
+                {% elif correo_nombre == 'CABA' %}
+                    <h4>
+                        Despreocupate, nuestro delivery IDACOM CABA te llama y pactan el mejor horario de entrega.
+                    </h4>
+                {% else %}
+                    <h4>
+                        Tu compra esta lista para retirar en nuestro punto IDACOM BARILOCHE. <br> Calle Con Nieve 2345 , Bariloche, Rio Negro, CP 1663.
+                    </h4>
+                {% endif %}
+
+                <h3 style="text-align: center; font-weight: 700; color: goldenrod;">
+                    Al <a href="https://idacom.herokuapp.com/login/">iniciar sesion</a> en tu cuenta podras ver tus compras, estados y facturas electronicas.
+                </h3>
+            </div>
+           
+        </div>
+    </body>
+</html>

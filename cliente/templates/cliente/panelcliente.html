@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+   
+   .menu-user {
+		top: 60px;
+		left: 0px;
+		right: 0px;
+		display: inline-block;
+		position: fixed;
+		text-align: center;
+		z-index: 1;
+		background: #333;
+		color: rgb(141, 46, 46);
+		text-transform: uppercase;
+		font-size: 12px;
+		border-radius: 10px;
+		box-shadow: 0 8px 10px -5px rgba(0, 0, 0, .2);
+		bottom: auto; 
+		transform-origin: 0% 100%;
+		border-radius: 0;
+		padding: 8px 30px;
+		font-size: 14px;
+	}
+
+	#btn-calificar{
+	background-color: #1d1f1d;
+	color: white;
+	outline: none;
+	}
+
+	#btn-calificar:hover{
+	outline: none;
+	color: white;
+	}
+
+	#btn-calificar:focus {
+	outline: none !important;
+	}
+
+	#btn-calificar:focus {
+	box-shadow: none;
+	}
+
+	#tabla-panel-cliente{
+		text-align: center;
+	}
+	
+	#panel-cliente{
+		justify-content: center;
+		margin-top: -30px;
+	}
+
+	#id_email, #id_telefono{
+		height: 27.5px;
+	}
+
+</style>
+
+
+
+<!--
+<div class="menu-user">
+	<a href="#" style="margin-right: 20px; color: orange;">Editar Datos Personales</a>
+	<a href="#"  style="color: orange;">Compras</a>
+</div>
+--> 
+<div class="row" id="panel-cliente">
+    <div class="col-lg-9">
+        <div class="box-element">
+            
+            <hr>
+            <h3 style="text-align:center">DATOS PERSONALES</h3>
+			<p style="text-align:center">Facil, toca, edita y guarda</p>
+            <hr>
+
+			<form id="form" action="" method="POST">
+                {% csrf_token %}
+
+                <div id="client-info" style="text-align:center">
+
+                    <div class="form-field" id='nom'>
+                        {{ cliente_form.nombre }}
+                    </div>
+                    <div class="form-field">
+                        {{ cliente_form.apellido }}
+                    </div>
+                    <div class="form-field">
+                        {{ cliente_form.telefono }}
+                    </div>
+                    <div class="form-field">
+                        {{ cliente_form.email }}
+                    </div>
+
+                </div>
+
+				<br>
+				<div class="d-flex justify-content-center">
+					<button class="c-button c-button--gooey" type="submit" style=" background-color: #1d1f1de7; outline-style: none; width: 280px;" form="form" value="GUARDAR CAMBIOS">
+						GUARDAR CAMBIOS
+						<div class="c-button__blobs">
+							<div></div>
+							<div></div>
+							<div></div>
+						</div>
+					</button>
+				</div>
+
+			</form>
+
+		
+			<div class="d-flex justify-content-center">
+				<form action="{% url 'password_change' %}" id='change-pass'>
+					{% csrf_token %}
+					<button class="c-button c-button--gooey" type="submit" style=" background-color: rgba(110, 107, 107, 0.89);  outline-style: none; width: 280px;" form="change-pass" value="GUARDAR CAMBIOS">
+						CAMBIAR CONTRASEÑA
+						<div class="c-button__blobs">
+							<div></div>
+							<div></div>
+							<div></div>
+						</div>
+					</button>
+				</form>
+			</div>
+
+			<div class="d-flex justify-content-center">
+				
+				<button class="c-button c-button--gooey" id="eliminar-cuenta" data-cliente="{{user}}"
+						type="submit" style=" background-color: rgba(255, 43, 43, 0.695);  outline-style: none; width: 280px;">
+					ELIMINAR CUENTA
+					<div class="c-button__blobs">
+						<div></div>
+						<div></div>
+						<div></div>
+					</div>
+				</button>
+				
+			</div>
+           
+        </div>
+    </div>
+
+	{% if query_count > 0 %}
+
+		<div class="col-lg-8">
+			<div class="box-element">
+				
+				{% if compras_activas|length >= 1 %}
+					
+					<hr>
+					<h3 style="text-align:center">Compras Activas</h3>
+					<hr>
+
+					<div class="box-element" id='tabla-panel-cliente'>
+						{% for compra in compras_activas %}
+
+							<div class="cart-row">
+								<div style="flex:1"></div>
+								<div style="flex:1; text-align: center;"><strong>Item</strong></div>
+								<div style="flex:1; text-align: center;"><strong>Cantidad</strong></div>
+							</div>
+				
+							{% for i in compra.0 %}
+							
+								<div class="cart-row">
+									
+									<div style="flex:1;"><img class="row-image" src="{{i.producto.imageURL}}"></div>
+									
+									<div style="flex:1"><p>{{i.producto.nombre}}</p></div>
+								
+									<div style="flex:1; text-align: center;"><p class="quantity">x{{i.quantity}}</p></div>
+									
+								</div>
+							
+							{% endfor %}
+							
+							<h5 style="text-align:center">TOTAL: ${{compra.2|floatformat:0}}</h5>
+
+							{% if compra.3 > 2 %}
+								<h5 style="text-align:center; color: rgb(235, 214, 28);">{{compra.1}}</h5>
+								<h6 style="text-align:center">Nro. seguimiento</h6>
+								<h6 style="text-align:center">{{compra.3}}</h6>
+								<h5 style="text-align:center;"><a href="https://www.oca.com.ar/Seguimiento/BuscarEnvio/paquetes/{{compra.3}}" style=" color: rgb(91, 43, 130); font-weight:900;">OCA</a></h5>
+							{% elif compra.3 == 1 %}
+								<h5 style="text-align:center; color: rgb(235, 214, 28);">{{compra.1}}</h5>
+								<h5 style="text-align:center; color: rgb(0, 138, 180);">ENVIO IDACOM CABA</h5>
+							{% elif compra.3 == 2 %}
+								<h5 style="text-align:center; color: rgb(235, 214, 28);">{{compra.1}}</h5>
+								<h5 style="text-align:center; color: rgb(10, 219, 191);"> PUNTO IDACOM BARILOCHE</h5>
+							{% else %}
+							{% endif %}
+							<hr>
+							<br>
+						{% endfor %}
+						
+					</div>
+				{% endif %}
+
+				{% if compras_pendiente|length >= 1 %}
+					
+					<hr>
+					<h3 style="text-align:center">Compras Pendiente</h3>
+					<hr>
+
+					<div class="box-element" id='tabla-panel-cliente'>
+
+						{% for compra in compras_pendiente %}
+						
+							<div class="cart-row">
+								<div style="flex:1"></div>
+								<div style="flex:1; text-align: center;"><strong>Item</strong></div>
+								<div style="flex:1; text-align: center;"><strong>Cantidad</strong></div>
+							</div>
+
+							{% for i in compra.0 %}
+							
+								<div class="cart-row">
+									
+									<div style="flex:1;"><img class="row-image" src="{{i.producto.imageURL}}"></div>
+									
+									<div style="flex:1"><p>{{i.producto.nombre}}</p></div>
+								
+									<div style="flex:1; text-align: center;"><p class="quantity">x{{i.quantity}}</p></div>
+									
+								</div>
+							
+							{% endfor %}
+				
+							<h5 style="text-align:center">TOTAL: ${{compra.2|floatformat:0}}</h5>
+							<h5 style="text-align:center; color: rgb(255, 0, 0);">{{compra.1}}</h5>
+							<h6 style="text-align:center">Despreocupate, al acreditarse el pago te avisamos.</h6>
+							<hr>
+							
+						{% endfor %}
+						
+					</div>
+				{% endif %}
+
+				{% if compras_entregado|length >= 1 %}
+
+					<hr>
+					<h3 style="text-align:center">Compras Entregadas</h3>
+					<hr>
+
+					<div class="box-element" id='tabla-panel-cliente'>
+						{% for compra in compras_entregado %}
+						
+							<div class="cart-row">
+								<div style="flex:1"></div>
+								<div style="flex:1; text-align: center;">Item</div>
+								<div style="flex:1; text-align: center;">Cantidad</div>
+								<div style="flex:1; text-align: center;">Calificacion</div>
+							</div>
+						
+							{% for i in compra.0 %}
+								
+								<div class="cart-row">
+									
+									<div style="flex:1;"><img class="row-image" src="{{i.producto.imageURL}}"></div>
+									
+									<div style="flex:1"><p>{{i.producto.nombre}}</p></div>
+								
+									<div style="flex:1; text-align: center;"><p class="quantity">x{{i.quantity}}</p></div>
+
+									{% if i.calificacion %}
+
+										<div class="stars" style="flex:1; text-align: center; --rating: {{i.calificacion}};"></div>
+
+									{% else %}
+
+										<div style="flex:1; text-align: center;">
+											<button class="c-button c-button--gooey" onclick="calificar(this)" data-compraid="{{compra.4}}" data-productoid="{{i.producto.id}}" data-name="{{i.producto.nombre}}" type="button" style=" background-color: #1d1f1de7; outline-style: none; width: 70px; font-size: 10px;">
+												<span style="margin-left: -1px;">CALIFICAR</span> 
+												<div class="c-button__blobs">
+													<div></div>
+													<div></div>
+													<div></div>
+												</div>
+											</button>
+										</div>
+									
+									{% endif %}
+								</div>
+							
+							{% endfor %}
+				
+							
+							<h5 style="text-align:center">TOTAL: ${{compra.2|floatformat:0}}</h5>
+							<h5 style="text-align:center; color: rgb(0, 141, 12);">{{compra.1}}</h5>
+
+							<hr>
+
+							
+							<br>
+						{% endfor %}
+						
+					</div>
+				{% endif %}	
+				
+			</div>
+		
+		{% else %}
+	
+
+			<div class="col-lg-8" style="margin-top: 30px;">
+				<hr>
+					<h2 style="text-align: center;">AUN NO TENES COMPRAS</h2>
+					<h6 style="text-align: center;">CUANDO LAS TENGAS, APARECERAN EN ESTA AREA</h6>
+					<div class="row" style="justify-content: center;">
+						<div>
+					
+							<a href="{% url 'productos' %}" class="c-button c-button--gooey ml-auto" style=" background-color: rgba(110, 107, 107, 0.89); text-align: center; padding-left: 20px; padding-right: 20px; width: 280px;">
+								VER PRODUCTOS
+								<div class="c-button__blobs">
+									<div></div>
+									<div></div>
+									<div></div>
+								</div>
+							</a>
+							
+						</div>
+					</div>    
+				<hr>
+			</div>
+
+		{% endif %}
+    </div>
+
+	<script type="text/javascript" src="{% static 'js/panelCliente.js' %}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.all.min.js"></script>
+	
+
+{% endblock %}

@@ -1,0 +1,569 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+	@media only screen and (max-width: 1000px),
+	(min-device-width: 700px) and (max-device-width: 1024px){
+		#added{
+		margin-top: 8px;
+		}
+	}
+
+	#precio-tachado-products-view{
+		font-family: 'Roboto', sans-serif;
+		font-weight: 800;
+		font-size: 20px;
+		text-decoration: line-through black 3px;
+		margin-top: -10px;
+		margin-bottom: 22px;
+		color: rgb(187, 27, 27);
+	}
+
+	#descuento-productos-view{
+		color: rgb(34 228 16);
+		font-weight: 900;
+	}
+</style>
+
+
+<div id="products-view" style="margin-top: 30px; margin-bottom: 55px;">
+	<div id="tabs">
+	<ul class="nav nav-tabs" id="myTab">
+		<li>
+			<a href="#kits" style="color: black;" id="A" class="nav-link active" data-toggle="tab">KITS</a>
+		</li>
+		<li>
+			<a href="#arma-tu-kit" style="color: black;" id="B" class="nav-link" data-toggle="tab">ARMA TU KIT</a>
+		</li>
+  	</ul>
+	</div>	
+  	<div class="tab-content">
+		<div id="kits" class="tab-pane fade show active">
+		
+			<div class="row" id="row-products" style="margin-top: -60px;">
+				{% for combo in combos %}
+					<div class="father" id="father-combos">
+
+						<div class="front">
+							<header>
+							</header>
+		
+							<a href="{% url 'detail' combo.slug %}"><img alt="img" src="{{combo.imageURL}}"></a>
+		
+							<div id="title-card" style="margin-top: 10px;">
+								<a href="{% url 'detail' combo.slug %}" style="text-decoration:none;"><h3>{{combo.nombre}}</h3></a>
+							</div>
+		
+							<div class="stars" style="--rating: {{combo.get_calificacion}};"></div>
+		
+							<footer>
+								<div id="card-precios">
+
+									{% if combo.precio_descuento == 0 %}
+										{% if combo.especial == True%}
+											{% if combo.precio_tachado != 0 %}
+												<div class="style-3">
+													<br>
+													<ins>
+														${{combo.precio|floatformat:0}}
+													</ins>
+													<div id="precio-tachado" style="margin-top: -12px;">
+														${{combo.precio_tachado|floatformat:0}}
+													</div>
+												</div>
+											{% else %}
+												<br>
+												<div class="style-3" >
+													<ins>
+														${{combo.precio|floatformat:0}}
+													</ins>
+												</div>
+												<br>
+											{% endif %}
+										{% elif combo.precio >= 9000 or order.total_check >= 9000 %}
+											<span id="descuento-productos-view">10% OFF</span> 
+											<div class="style-3">
+												<ins>
+													${{combo.get_10_off|floatformat:0}}
+												</ins>
+											</div>
+											<div id="precio-tachado-products-view">
+												${{combo.precio|floatformat:0}}
+											</div>
+										{% else %}	
+											<br>								
+											<div class="style-3" >
+												<ins>
+													${{combo.precio|floatformat:0}}
+												</ins>
+											</div>
+											<br>
+										{% endif %}
+
+									{% else %}
+
+										{% if combo.especial == True%}
+											{% if combo.precio_tachado != 0 %}
+												<div class="style-3">
+													<br>
+													<ins>
+														${{combo.precio|floatformat:0}}
+													</ins>
+													<div id="precio-tachado" style="margin-top: -12px;">
+														${{combo.precio_tachado|floatformat:0}}
+													</div>
+												</div>
+											{% else %}
+												<br>
+												<div class="style-3" >
+													<ins>
+														${{combo.precio|floatformat:0}}
+													</ins>
+												</div>
+												<br>
+											{% endif %}										
+										{% elif combo.precio >= 9000 or order.total_check >= 9000 %}
+											<span id="descuento-productos-view">10% OFF</span> 
+											<div class="style-3">
+												{% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+												<ins>
+													${{combo.get_10_off_dis|floatformat:0}}
+												</ins>
+												<div id="precio-tachado-products-view">
+													${{combo.precio_descuento|floatformat:0}}
+												</div>
+												{% else %}
+												<ins>
+													${{combo.get_10_off|floatformat:0}}
+												</ins>
+												<div id="precio-tachado-products-view">
+													${{combo.precio|floatformat:0}}
+												</div>
+												{% endif %}
+											</div>
+										{% else %}
+											{% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+												<div class="style-3" style="display: inline;">							
+													<ins>
+														${{combo.precio_descuento|floatformat:0}}
+													</ins>
+												</div>
+												<div id="precio-tachado-products-view" style="display: inline;">
+													${{combo.precio|floatformat:0}}
+												</div>
+											{% else %}
+												<div class="style-3" style="display: inline;">
+													<ins>
+														${{combo.precio|floatformat:0}}
+													</ins>
+												</div>
+												<div id="precio-tachado-products-view" style="display: inline;">
+													${{combo.precio_descuento|floatformat:0}}
+												</div>
+											{% endif %}
+										{% endif %}
+			
+									{% endif %}
+
+								</div>
+								
+								<div class="row" id="botones-row">
+									{% if combo.disponible == True %}
+										<button class="col cart-button" id="cart-button" data-product="{{combo.id}}" data-action="add" onclick="addProducto(this)">
+											<span class="add-to-cart" >AGREGAR AL CARRITO</span>
+											<span class="added" id="added">AGREGADO</span>
+											<i class="fas fa-shopping-cart"></i>
+											<i class="fas fa-box"></i>
+										</button>
+									{% else %}
+										<button class="col cart-button" id="cart-button" disabled>
+											<span class="add-to-cart" >SIN STOCK</span>											
+										</button>
+									{% endif %}
+									<a href="{% url 'detail' combo.slug %}">
+										<button class="col cart-button" id="ver-button">
+											VER
+										</button>
+									</a>
+								</div>
+		
+							</footer>
+		
+						</div>
+		
+					</div>
+		
+				{% endfor %}
+	
+			</div>
+	  	</div>
+
+	  	<div id="arma-tu-kit" class="tab-pane fade">
+			<div id="arma-kit-planchettas">
+				<hr>
+				<h3 style="text-align: center;">
+					LA PLANCHETTA
+				</h3>
+				<hr>
+			</div>
+	
+			<!--<p class="label-arma-kit">Accede a los descuentos al armar tu combo con LA PLANCHETTA® 1 <span style="font-size: 11px;">o</span> 2 hornallas</p>-->
+	
+			<div class="row" id="row-products">
+				{% for planchetta in planchettas %}				
+								
+					<div class="father" id="father-planchettas">
+					
+						<div class="front">
+							<header>
+							</header>
+		
+							<a href="{% url 'detail' planchetta.slug %}"><img alt="img" src="{{planchetta.imageURL}}"></a>
+		
+							<div id="title-card" style="margin-top: 10px; height: 7px;">
+								<a href="{% url 'detail' planchetta.slug %}" style="text-decoration:none;"><h3>{{planchetta.nombre}}</h3></a>
+							</div>
+		
+							<div class="stars" style="--rating: {{planchetta.get_calificacion}};"></div>
+		
+							<footer>
+
+								<div id="card-precios">
+									
+									{% if planchetta.precio_descuento == 0 %}
+
+										{% if planchetta.especial == True%}
+											{% if planchetta.precio_tachado != 0 %}
+												<div class="style-3">
+													<br>
+													<ins>
+														${{planchetta.precio|floatformat:0}}
+													</ins>
+													<div id="precio-tachado" style="margin-top: -12px;">
+														${{planchetta.precio_tachado|floatformat:0}}
+													</div>
+												</div>
+											{% else %}
+												<br>
+												<div class="style-3" >
+													<ins>
+														${{planchetta.precio|floatformat:0}}
+													</ins>
+												</div>
+												<br>
+											{% endif %}		
+										{% elif planchetta.precio >= 9000 or order.total_check >= 9000 %}
+											<span id="descuento-productos-view">10% OFF</span> 
+											<div class="style-3">
+												<ins>
+													${{planchetta.get_10_off|floatformat:0}}
+												</ins>
+											</div>
+											<div id="precio-tachado-products-view">
+												${{planchetta.precio|floatformat:0}}
+											</div>
+										{% else %}
+											<br>
+											<div class="style-3" >
+												<ins>
+													${{planchetta.precio|floatformat:0}}
+												</ins>
+											</div>
+											<br>
+										{% endif %}
+									
+									{% else %}
+
+										{% if planchetta.especial == True%}
+											{% if planchetta.precio_tachado != 0 %}
+												<div class="style-3">
+													<br>
+													<ins>
+														${{planchetta.precio|floatformat:0}}
+													</ins>
+													<div id="precio-tachado" style="margin-top: -12px;">
+														${{planchetta.precio_tachado|floatformat:0}}
+													</div>
+												</div>
+											{% else %}
+												<br>
+												<div class="style-3" >
+													<ins>
+														${{planchetta.precio|floatformat:0}}
+													</ins>
+												</div>
+												<br>
+											{% endif %}								
+										{% elif planchetta.precio >= 9000 or order.total_check >= 9000 %}
+											<span id="descuento-productos-view">10% OFF</span> 
+											<div class="style-3">
+												{% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+												<ins>
+													${{planchetta.get_10_off_dis|floatformat:0}}
+												</ins>
+												<div id="precio-tachado-products-view">
+													${{planchetta.precio_descuento|floatformat:0}}
+												</div>
+												{% else %}
+												<ins>
+													${{planchetta.get_10_off|floatformat:0}}
+												</ins>
+												<div id="precio-tachado-products-view">
+													${{planchetta.precio|floatformat:0}}
+												</div>
+												{% endif %}
+											</div>
+										{% else %}
+											{% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+												<div class="style-3" style="display: inline;">
+													<ins>
+														${{planchetta.precio_descuento|floatformat:0}}
+													</ins>
+												</div>
+												<div id="precio-tachado-products-view" style="display: inline;">
+													${{planchetta.precio|floatformat:0}}
+												</div>
+											{% else %}
+												<div class="style-3" style="display: inline;">
+													<ins>
+														${{planchetta.precio|floatformat:0}}
+													</ins>
+												</div>
+												<div id="precio-tachado-products-view" style="display: inline;">
+													${{planchetta.precio_descuento|floatformat:0}}
+												</div>
+											{% endif %}
+										{% endif %}
+			
+									{% endif %}
+
+								</div>
+		
+								<div class="row" id="botones-row" >
+									{% if planchetta.disponible == True %}
+										<button class="col cart-button" id="cart-button" data-product="{{planchetta.id}}" data-action="add" onclick="addProducto(this)">
+											<span class="add-to-cart" >AGREGAR AL CARRITO</span>
+											<span class="added" id="added">AGREGADO</span>
+											<i class="fas fa-shopping-cart"></i>
+											<i class="fas fa-box"></i>
+										</button>
+									{% else %}
+										<button class="col cart-button" id="cart-button" disabled>
+											<span class="add-to-cart" >SIN STOCK</span>											
+										</button>
+									{% endif %}
+									<a href="{% url 'detail' planchetta.slug %}">
+										<button class="col cart-button">
+											VER
+										</button>
+									</a>
+								</div>
+		
+							</footer>
+		
+						</div>
+		
+					</div>
+		
+				{% endfor %}
+		
+			</div>
+	
+			<div id="arma-kit-accesorios">
+				<hr>
+				<h3 style="text-align: center;">
+					ACCESORIOS
+				</h3>
+				<hr>
+			</div>
+	
+			<div class="row" id="row-products" style="margin-top: -10px;">
+				{% for accesorio in accesorios %}
+				
+					<div class="father" id="father-accesorios">
+		
+						<div class="front">
+							<header>
+							</header>
+		
+							<a href="{% url 'detail' accesorio.slug %}"><img alt="img" src="{{accesorio.imageURL}}"></a>
+		
+							<div id="title-card" style="margin-top: 10px;">
+								<a href="{% url 'detail' accesorio.slug %}" style="text-decoration:none;"><h3>{{accesorio.nombre}}</h3></a>
+							</div>
+							
+							<div class="stars" style="--rating: {{accesorio.get_calificacion}};"></div>
+		
+							<footer>
+
+								<div id="card-precios">
+									
+									{% if accesorio.precio_descuento == 0 %}
+
+										{% if accesorio.especial == True%}
+											{% if accesorio.precio_tachado != 0 %}
+												<div class="style-3">
+													<br>
+													<ins>
+														${{accesorio.precio|floatformat:0}}
+													</ins>
+													<div id="precio-tachado" style="margin-top: -12px;">
+														${{accesorio.precio_tachado|floatformat:0}}
+													</div>
+												</div>
+											{% else %}
+												<br>
+												<div class="style-3" >
+													<ins>
+														${{accesorio.precio|floatformat:0}}
+													</ins>
+												</div>
+												<br>
+											{% endif %}
+										{% elif accesorio.precio >= 9000 or order.total_check >= 9000 %}
+											<span id="descuento-productos-view">10% OFF</span> 
+											<div class="style-3">
+												<ins>
+													${{accesorio.get_10_off|floatformat:0}}
+												</ins>
+											</div>
+											<div id="precio-tachado-products-view">
+												${{accesorio.precio|floatformat:0}}
+											</div>
+										{% else %}
+											<br>
+											<div class="style-3" >
+												<ins>
+													${{accesorio.precio|floatformat:0}}
+												</ins>
+											</div>
+											<br>
+										{% endif %}
+									
+									{% else %}
+
+										{% if accesorio.especial == True%}
+											{% if accesorio.precio_tachado != 0 %}
+												<div class="style-3">
+													<br>
+													<ins>
+														${{accesorio.precio|floatformat:0}}
+													</ins>
+													<div id="precio-tachado" style="margin-top: -12px;">
+														${{accesorio.precio_tachado|floatformat:0}}
+													</div>
+												</div>
+											{% else %}
+												<br>
+												<div class="style-3" >
+													<ins>
+														${{accesorio.precio|floatformat:0}}
+													</ins>
+												</div>
+												<br>
+											{% endif %}
+										{% elif accesorio.precio >= 9000 or order.total_check >= 9000 %}							
+											<span id="descuento-productos-view">10% OFF</span> 									
+											<div class="style-3">
+												{% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+												<ins>
+													${{accesorio.get_10_off_dis|floatformat:0}}
+												</ins>
+												<div id="precio-tachado-products-view">
+													${{accesorio.precio_descuento|floatformat:0}}
+												</div>
+												{% else %}
+												<ins>
+													${{accesorio.get_10_off|floatformat:0}}
+												</ins>
+												<div id="precio-tachado-products-view">
+													${{accesorio.precio|floatformat:0}}
+												</div>
+												{% endif %}
+											</div>										
+										{% else %}
+											{% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+												<div class="style-3" style="display: inline;">
+													<ins>
+														${{accesorio.precio_descuento|floatformat:0}}
+													</ins>
+												</div>
+												<div id="precio-tachado-products-view" style="display: inline;">
+													${{accesorio.precio|floatformat:0}}
+												</div>
+											{% else %}
+												<div class="style-3" style="display: inline;">
+													<ins>
+														${{accesorio.precio|floatformat:0}}
+													</ins>
+												</div>
+												<div id="precio-tachado-products-view" style="display: inline;">
+													${{accesorio.precio_descuento|floatformat:0}}
+												</div>
+											{% endif %}
+										{% endif %}
+			
+									{% endif %}
+
+								</div>
+
+								<div class="row" id="botones-row">
+									{% if accesorio.disponible == True %}
+										<button class="col cart-button" id="cart-button" data-product="{{accesorio.id}}" data-action="add" onclick="addProducto(this)">
+											<span class="add-to-cart" >AGREGAR AL CARRITO</span>
+											<span class="added" id="added">AGREGADO</span>
+											<i class="fas fa-shopping-cart"></i>
+											<i class="fas fa-box"></i>
+										</button>
+									{% else %}
+										<button class="col cart-button" id="cart-button" disabled>
+											<span class="add-to-cart" >SIN STOCK</span>											
+										</button>
+									{% endif %}
+									<a href="{% url 'detail' accesorio.slug %}">
+										<button class="col cart-button">
+											VER
+										</button>
+									</a>
+								</div>
+		
+							</footer>
+		
+						</div>
+		
+					</div>
+		
+				{% endfor %}
+				
+			</div>
+	  	</div>
+  	</div>
+</div>
+
+<p class="label-home-menubar" id="changeText">Envio gratis en ordenes superiores a $4000</p>
+
+<script type="text/javascript" src="{% static 'js/productos.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bannerSuperior.js' %}"></script>
+<!--
+<script>
+	
+	$(document).ready(function(){
+		$('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
+			localStorage.setItem('activeTab', $(e.target).attr('href'));
+		});
+		var activeTab = localStorage.getItem('activeTab');
+		if(activeTab){
+			$('#myTab a[href="' + activeTab + '"]').tab('show');
+		}
+	});
+
+</script>
+-->
+
+
+{% endblock content %}
+
+
+
+

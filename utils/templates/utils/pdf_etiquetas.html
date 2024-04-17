@@ -1,0 +1,256 @@
+
+<style>
+
+    a{
+        text-decoration: none;
+        color: black;
+    }
+
+    .page .etiqueta td {
+        max-width: 205px;
+        padding: 3px;
+        border: 1px #000000 solid;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .imagenProducto {
+        width: 103px;
+    }
+
+    .imagenServicio {
+        height: 20px;
+    }
+
+    .imagenQR {
+        width: 150px;
+        height: 150px;
+        margin: 5px;
+    }
+
+    .imagenBarCode {
+        padding: 2px;
+        margin-bottom: -5px;
+    }
+
+    .numeroBarCode {
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .codigoQR {
+        font-weight: bold;
+        font-size: large;
+    }
+
+    .sucursalDestinoCodigo {
+        font-size: 35px;
+        font-weight: bold;
+    }
+
+    .sucursalDestino {
+        font-size: 15px;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    .sucusalOrigen {
+        font-size: 30px;
+    }
+
+    .zonaCP {
+        font-size: 55px;
+        font-weight: bold;
+        position: relative;
+        display: inline-block;
+        line-height: 40px;
+    }
+
+    .tipoEntrega {
+        font-size: 12px;
+    }
+
+
+    .destinatarioContenedorTabla {
+        display: table;
+        height: 46px;
+        width: 100%;
+    }
+
+    .destinatarioContenedorCelda {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .destinatarioContenido {
+        overflow: hidden;
+        max-height: 46px;
+        font-size: 13px;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    .remitenteContenedorTabla {
+        display: table;
+        height: 30px;
+        width: 100%;
+    }
+
+    .remitenteContenedorCelda {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .remitenteContenido {
+        overflow: hidden;
+        max-height: 30px;
+        font-size: 12px;
+        
+    }
+
+    .datoPaquete {
+        font-size: 13px;
+    }
+
+    .observacionesContenedorTabla {
+        display: table;
+        height: 90px;
+    }
+
+    .observacionesContenedorCelda {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .observacionesContenido {
+        overflow: hidden;
+        max-height: 92px;
+        font-size: 13px;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    .acuseDatosContenedorTabla {
+        display: table;
+    }
+
+    .acuseDatosContenedorCelda {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .acuseDatosContenido {
+        font-size: 13px;
+        max-height: 150px;
+        min-height: 191px;
+        padding-top: 10px;
+        padding-left: 5px;
+    }
+
+
+
+</style>
+
+
+{% for item in products_list %}
+    {% for k,v in item.items %}
+    <p style="text-align: center; width: 100%; display: inline; font-weight: 900; font-size: 10px;">| {{k}} - {{v}} |</p>
+    {% endfor %}
+{% endfor %}
+<hr>
+<br>
+
+<div id='etiquetas'>
+    <table class='page'>
+        <tr>
+            <td>
+                <table class='etiqueta'>
+                    <tr style='height: 40px;'>
+                        <td bgcolor='#50307e'><img class='imagenProducto'
+                                src='http://www5.oca.com.ar/OCAEpakNet/Imagenes/logoEtiqueta_ePak.png' /></td>
+                        <td style="background-color: rgb(190, 190, 190);"><a>OR</a></td>
+                        <td style="background-color: white;" colspan='2'><a class='sucusalOrigen'>{{datos_etiqueta.NroOrden}}</a></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: rgb(190, 190, 190);"><a>GUIA</a></td>
+                        <td colspan='3'><img class='imagenBarCode' id='imagenBarCode'
+                                src='data:image/png;base64,{{datos_etiqueta.CodeBar}}' /><br /><a
+                                class='numeroBarCode'>{{datos_etiqueta.NroGuia}}</a></td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: rgb(190, 190, 190);"><a>DOC. CLIENTE</a></td>
+                        <td style="background-color: rgb(190, 190, 190);" style='width: 90px;'><a>BULTO</a></td>
+                        <td style="background-color: rgb(190, 190, 190);"><a>OPERATIVA</a></td>
+                        <td style="background-color: rgb(190, 190, 190);"><a>PESO</a></td>
+                    </tr>
+                    <tr>
+                        <td><a class='datoPaquete'>{{datos_etiqueta.DocCliente}}</a></td>
+                        <td><a class='datoPaquete'>{{datos_etiqueta.Bulto}}</a></td>
+                        <td><a class='datoPaquete'>{{datos_etiqueta.Operativa}}</a></td>
+                        <td><a class='datoPaquete'>{{datos_etiqueta.PesoTotal}}</a></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor='#BEBCBC'><a>SUCURSAL DESTINO</a></td>
+                        <td colspan='2'><a class='sucursalDestinoCodigo'>{{datos_etiqueta.SucursalDestino}}</a></td>
+                        <td style='width: 46px;'><a class='zonaCP'> </a></td>
+                    </tr>
+                    <tr>
+                        <td style='height:25px;' colspan='4' bgcolor='#FFFFFF'><img class='imagenServicio'
+                                src='http://www5.oca.com.ar/OCAEpakNet/Imagenes/estandar.png' /></td>
+                    </tr>
+                    <tr height='40px'>
+                        <td bgcolor='#BEBCBC'><a class='tipoEntrega'>TIPO DE ENTREGA</a></td>
+                        <td colspan='3'><a class='sucursalDestino'>{{datos_etiqueta.Entrega}}</a></td>
+                    </tr>
+                    <tr>
+                        <td colspan='4' bgcolor='#DBDED9'><a>DESTINATARIO</a></td>
+                    </tr>
+                    <tr>
+                        <td colspan='4'>
+                            <div class='destinatarioContenedorTabla'>
+                                <div class='destinatarioContenedorCelda'>
+                                    <div class='destinatarioContenido'> Destinatario: {{datos_etiqueta.Destinatario}} Domicilio: {{datos_etiqueta.Domicilio}} Telefono: {{datos_etiqueta.Telefono}}</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan='2' bgcolor='#BEBCBC'><a>OBSERVACIONES</a></td>
+                        <td rowspan='3' colspan='2'><img class='imagenQR' id='imagenQR'
+                                src='data:image/png;base64,{{datos_etiqueta.QR}}' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan='2' style='height: 93px;'>
+                            <div class='observacionesContenedorTabla'>
+                                <div class='observacionesContenedorCelda'>
+                                    <div class='observacionesContenido'>{{datos_etiqueta.Observaciones}}</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor='#BEBCBC'><a>SUCURSAL ORIGEN</a></td>
+                        <td><a class='sucusalOrigen'>{{datos_etiqueta.SucursalOrigen}}</a></td>
+                    </tr>
+                    <tr>
+                        <td colspan='4' bgcolor='#DBDED9'><a>REMITENTE</a></td>
+                    </tr>
+                    <tr>
+                        <td colspan='4'>
+                            <div class='remitenteContenedorTabla'>
+                                <div class='remitenteContenedorCelda'>
+                                    <div class='remitenteContenido'>IDACOM - Contacto: WhatsApp 5492215256378</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        <tr>
+            <td style='position: absolute; top: 0; bottom: 0;'></td>
+        </tr>
+    </table>
+    
+</div>
+

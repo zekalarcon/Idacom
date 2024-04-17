@@ -1,0 +1,125 @@
+{% load compra_tags %}
+
+<style>
+	#promos-icono{
+		text-align: center;
+		font-size: 14px;
+		font-weight: 800;
+		color: rgb(255, 255, 255);
+		margin-top: 6px;
+		position: absolute;
+		right: 90px;
+		background-color: rgb(34 228 16);
+		border-radius: 4px;
+		width: 120px;
+	}
+
+	@media only screen and (max-width: 1130px),
+	(min-device-width: 700px) and (max-device-width: 1024px){
+		#promos-icono{
+			font-size: 11px;
+			color: rgb(255, 255, 255);
+			margin-top: 12px;
+			text-align: center;
+			width: 95px;
+			background-color: rgb(34 228 16);
+		}
+	}
+
+	@media only screen and (max-width: 699px),
+	(min-device-width: 200px) and (max-device-width: 699px){
+		#promos-icono{
+			font-size: 10px;
+			color: rgb(255, 255, 255);
+			margin-top: 11px;
+			text-align: center;
+			width: 83px;
+			height: 34px;
+			right: 116px;
+			display: flex;
+			background-color: rgb(34 228 16);
+			flex-direction: column;
+			justify-content: center;
+		}
+	}
+
+</style>
+
+<div id="menubar">
+  
+	<header>
+		
+		<div id="brand">
+			<a href="{% url 'inicio' %}"><img src="/static/images/logo_idacom.png" id='logo'></a>
+			<!--<span class="caption"><a href="{% url 'inicio' %}">REPRESENTANTE OFICIAL LA PLANCHETTA®</a></span>-->
+		</div>
+		<nav>
+			<ul>
+				<li><a style="text-decoration: none;" href="{% url 'productos' %}">PRODUCTOS</a></li>
+				<li><a style="text-decoration: none;" href="{% url 'nosotros' %}">NOSOTROS</a></li>
+				<li><a style="text-decoration: none;" href="{% url 'contacto' %}">CONTACTO</a></li>
+				{% if not user.is_authenticated %}
+				<li><a style="text-decoration: none;" href="{% url 'login' %}">INICIAR SESION</a></li>
+				{% endif %}
+				{% if user.is_authenticated %}
+				<li><a style="text-decoration: none;" href="{% url 'panelcliente' %}"
+						id='user'>{{request.user.first_name}}</a>
+				</li>
+				<li><a style="text-decoration: none;" href="{% url 'logout' %}">SALIR</a></li>
+				{% endif %}
+			</ul>
+		</nav>
+		
+		<div>
+
+			{% if order.get_cart_total == 0 %}
+						
+			{% elif order.get_cart_total < 4000 %}
+			<div id="promos-icono">
+				SUMA ${% promos_navbar 4000 order.total_check %} PARA ENVIO GRATIS
+			</div>
+			{% elif order.total_check >= 4000 and order.total_check < 9000 %}
+			<div id="promos-icono">
+				SUMA ${% promos_navbar 9000 order.total_check %} PARA 10% OFF
+			</div>			
+			{% elif order.total_check >= 9000 %}
+
+			{% endif%}
+
+		</div>
+		
+		<div class="cart-icon" id="div-cart">
+
+			<a href="{% url 'carrito' %}" id='cart-icon' class="cart position-relative d-inline-flex"
+			aria-label="View your shopping cart">
+			<img src="/static/images/carro.png" alt="" id="cart-png">
+			<span class="cart-basket d-flex align-items-center justify-content-center">
+				{{cartItems}}
+			</span>
+			</a>
+			
+		</div>
+		<div id="hamburger-icon" onclick="toggleMobileMenu(this)">
+			<div class="bar1"></div>
+			<div class="bar2"></div>
+			<div class="bar3"></div>
+			<ul class="mobile-menu">
+				<li><a style="text-decoration: none; color: white;" href="{% url 'productos' %}">PRODUCTOS</a></li>
+				<li><a style="text-decoration: none; color: white;" href="{% url 'nosotros' %}">NOSOTROS</a></li>
+				<li><a style="text-decoration: none; color: white;" href="{% url 'contacto' %}">CONTACTO</a></li>
+				{% if not user.is_authenticated %}
+				<li><a style="text-decoration: none; color: white;" href="{% url 'login' %}">INICIAR SESION</a></li>
+				{% endif %}
+				{% if user.is_authenticated %}
+				<li><a style="text-decoration: none; color: white;" href="{% url 'panelcliente' %}"
+						id='user'>{{request.user.first_name}}</a>
+				</li>
+				<li><a style="text-decoration: none; color: rgb(192, 0, 0);" href="{% url 'logout' %}">SALIR</a></li>
+				{% endif %}
+			</ul>
+		</div>
+	</header>    
+  
+</div>
+
+

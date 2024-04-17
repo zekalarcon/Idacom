@@ -1,0 +1,741 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load compra_tags %}
+
+    <style>
+
+		#carousel{
+			margin-top: -26px;
+			margin-left: -15px;
+			margin-right: -15px;
+			overflow: hidden;
+		}
+
+		#texto-carousel{
+			color: rgb(255, 247, 247);
+			font-family: 'Fredoka One', cursive;
+			-webkit-text-stroke: 2px black;
+		}
+
+		.img-fluid{
+			max-width: 90%;
+			height: auto;
+		}
+
+		#text-1{
+			font-size: 25px;
+			letter-spacing: 3px;
+			font-family: 'Roboto', sans-serif;
+		}
+
+		video{
+			width: 100%;
+			height: 700px;
+			object-fit: cover;
+		}
+
+		h3 a:link,h3 a:visited,h3  a:hover,h3 a:active
+		{
+			color: #000000;
+			text-decoration: none;
+		}
+
+		#nombre-slide{
+			font-weight: 900;
+		}
+
+		.swiper {
+			width: 80%;
+			height: 350px;
+		}
+
+		.swiper-button-next, .swiper-button-prev{
+			color: #000009;
+		}
+
+		.mySwiperHome .swiper-slide img{
+			height: 100px;
+		}
+
+		.mySwiperHome{
+			height: 220px;
+		}
+
+
+		/* Smaller than standard 960 (devices and browsers) */
+		@media only screen and (max-width: 959px) {}
+
+		/* Tablet Portrait size to standard 960 (devices and browsers) */
+		@media only screen and (min-width: 768px) and (max-width: 959px) {}
+
+		/* All Mobile Sizes (devices and browser) */
+		@media only screen and (max-width: 767px) {
+			
+		}
+
+		/* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
+		@media only screen and (min-width: 480px) and (max-width: 767px) {}
+
+		/* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
+		@media only screen and (max-width: 479px) {}
+
+		@media only screen and (max-width: 1000px),
+		(min-device-width: 700px) and (max-device-width: 1024px){
+			
+			#text-1{
+			margin-top: -30px;
+			text-align: center;
+			}
+
+			.carousel-item{
+			justify-content: center;
+			}
+
+			#added{
+				margin-top: 0px;
+			}
+
+			#sin-stock-button{
+				margin-top: 2px;
+				width: 90%;
+			}
+
+			#precio-tachado{
+                margin-top: -23px;
+                margin-bottom: 20px;
+            }
+
+			video{
+				width: 100%;
+				height: 300px;
+				object-fit: cover;
+			}
+
+			#text-1{
+				font-size: 17px;
+				letter-spacing: 2px;
+			}
+
+			.img-fluid{
+				max-width: 75%;
+				height: auto;
+			}
+
+		}
+		
+    </style>
+
+
+    <div id="carousel" class="carousel slide carousel-fade" data-ride="carousel" data-interval=false>
+		<ol class="carousel-indicators">
+			<li data-target="#carousel" data-slide-to="0" class="active"></li>
+			<li data-target="#carousel" data-slide-to="1"></li>
+			<li data-target="#carousel" data-slide-to="2"></li>
+		</ol>
+		<div class="carousel-inner" role="listbox">
+			<!-- /.carousel-item -->
+			<div class="carousel-item active">
+
+				<video autoplay muted onended="nextVideo()" data-video="video-1" id="video-1">
+				<source src="/static/images/inicio/Lomo-a-la-pimienta-negra-con-papa-plomo.mp4" type="video/mp4">
+				</video>
+
+			</div>
+			<!-- /.carousel-item -->
+			<div class="carousel-item">
+				
+				<video autoplay muted onended="nextVideo()" data-video="video-2" id="video-2">
+					<source src="/static/images/inicio/Vacio-con-vegetales-grillados.mp4" type="video/mp4">
+				</video>
+				
+			</div>
+			<!-- /.carousel-item -->
+			<div class="carousel-item">
+				
+				<video autoplay muted onended="nextVideo(this)" data-video="video-3" id="video-3">
+				<source src="/static/images/inicio/Brusquetas-de-langostinos.mp4" type="video/mp4">
+				</video>
+
+			</div>
+
+		</div>
+		<!-- /.carousel-inner -->
+		<a class="carousel-control-prev" href="#carousel" role="button" data-slide="prev">
+			<!--<span class="carousel-control-prev-icon" aria-hidden="true"></span> -->
+			<span class="sr-only">Previous</span>
+		</a>
+		<a class="carousel-control-next" href="#carousel" role="button" data-slide="next">
+			<!--<span class="carousel-control-next-icon" aria-hidden="true"></span> -->
+			<span class="sr-only">Next</span>
+		</a>
+    </div>
+  	<!-- /.carousel -->
+
+    <div class="container" style="margin-top: 40px;">
+      <div class="row align-items-center" id='text-1'>
+          <div class="col-lg-6 offset-lg-1">
+            
+            <p><strong><em>La Planchetta</em></strong> es una herramienta que funciona sobre todo tipo de superficie, ayudará y cambiará tu forma de cocinar para siempre.</p>
+            
+          </div>
+          <div class="col-lg-4">
+            <img src="/static/images/inicio/plachetta-con-tapa.png" alt="" class="img-fluid">
+          </div>
+      </div>
+    </div>
+
+    <div id="kits-home-slider">
+
+        <hr>
+          <h3 style="text-align: center;"><a href="https://idacom.com.ar/productos/">KITS DESTACADOS</a></h3>
+        <hr>
+
+		<div class="swiper" id="swiper1">
+		
+			<div class="swiper-wrapper">
+				<!-- Slides -->
+				{% for combo in combos %}
+	
+					<div class="swiper-slide">
+						<div class="text-center my-3">
+							<div id="img-div-swiper">
+								<a href="{% url 'detail' combo.slug %}"><img src="{{combo.imageURL}}" style="width: 100px; height: 100px;"></a>
+							</div>
+							<div id="nombre-slide">
+								<a href="{% url 'detail' combo.slug %}" style="color: rgba(0, 0, 0, .9); text-decoration: none;">{{combo.nombre}}</a>
+							</div>
+							
+							{% if combo.precio_descuento == 0 %}
+								{% if combo.especial == True %}
+									{% if combo.precio_tachado != 0 %}	
+										<div id="slide-precio">
+											<br>
+											<br>
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{combo.precio|floatformat:0}}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{combo.precio_tachado|floatformat:0}}</span></p>	
+										</div>
+									{% else %}
+										<br>
+										<br>
+										<div id="slide-precio" style="margin-bottom: 0px;">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{combo.precio|floatformat:0}}</p>
+										</div>
+										<br>   
+									{% endif %}     
+								{% elif combo.precio >= 9000 or order.total_check >= 9000 %}
+									<div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div>
+									<div id="slide-precio">
+										<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 combo.precio %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{combo.precio|floatformat:0}}</span></p>
+									</div>
+								{% else %}
+									<br>
+									<br>
+									<div id="slide-precio" style="margin-bottom: 0px;">
+										<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${{combo.precio|floatformat:0}}</p>
+									</div>
+									<br>
+								{% endif %}
+	
+							{% else %}
+	
+								{% if combo.especial == True %}
+									{% if combo.precio_tachado != 0 %}
+										<br>
+										<br>
+										<div id="slide-precio">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{combo.precio|floatformat:0}}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{combo.precio_tachado|floatformat:0}}</span></p>
+										</div>
+									{% else %}
+										<br>
+										<br>
+										<div id="slide-precio" style="margin-bottom: 0px;">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{combo.precio|floatformat:0}}</p>
+										</div>
+										<br>   
+									{% endif %}                            
+								{% elif combo.precio >= 9000 or order.total_check >= 9000 %}
+									<div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div>
+									{% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+										<div id="slide-precio">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 combo.precio_descuento %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{combo.precio_descuento|floatformat:0}}</span></p>
+										</div>
+									{% else %}
+										<div id="slide-precio">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 combo.precio %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{combo.precio|floatformat:0}}</span></p>
+										</div>
+									{% endif %}
+								{% else %}
+									{% if 'CB016' in products_sku  or 'LA PLANCHETTA® 1 HORNALLA' in products_sku %}
+										<div id="slide-precio" style="margin-bottom: -20px;">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${{combo.precio_descuento|floatformat:0}}<br><p id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{combo.precio|floatformat:0}}</p></p>
+										</div>
+									{% else %}
+										<div id="slide-precio" style="margin-bottom: -20px;">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${{combo.precio|floatformat:0}}<br><p id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{combo.precio_descuento|floatformat:0}}</p></p>
+										</div>
+									{% endif %}
+								{% endif %}
+					
+							{% endif %}
+
+
+							{% if combo.disponible == True %}
+							<button class="col cart-button" id="cart-button"  data-product="{{combo.id}}" data-action="add" data-info="home" onclick="botonTabla(this)" style="background-color: #1d1f1d; outline-style: none;">
+								<span class="add-to-cart">AGREGAR AL CARRITO</span>         
+							{% else %}  
+							<button class="col cart-button" id="sin-stock-button"  data-product="{{combo.id}}" data-action="add"  style="background-color: #1d1f1d; outline-style: none;" disabled>
+								<span class="add-to-cart" >SIN STOCK</span>
+							{% endif %}
+								<span class="added" id="added">AGREGADO</span>
+								<i class="fas fa-shopping-cart"></i>
+								<i class="fas fa-box"></i>
+							</button>
+							
+						</div>
+					</div>
+				{% endfor %}
+	
+			</div>
+		  
+			<!-- If we need navigation buttons -->
+			<div class="swiper-button-prev"></div>
+			<div class="swiper-button-next"></div>  
+	
+		</div>
+	
+
+    </div>
+
+	<div id="kits-home-slider2" style="display: none;">
+
+        <hr>
+          <h3 style="text-align: center;"><a href="https://idacom.com.ar/productos/">KITS DESTACADOS</a></h3>
+        <hr>
+
+		<div class="swiper" id="swiper2">
+		
+			<div class="swiper-wrapper">
+				<!-- Slides -->
+				{% for combo in combos %}
+	
+					<div class="swiper-slide">
+						<div class="container text-center my-3">
+							<div id="img-div-swiper">
+								<a href="{% url 'detail' combo.slug %}"><img src="{{combo.imageURL}}" style="width: 100px; height: 100px;"></a>
+							</div>
+							<div id="nombre-slide">
+								<a href="{% url 'detail' combo.slug %}" style="color: rgba(0, 0, 0, .9); text-decoration: none;">{{combo.nombre}}</a>
+							</div>
+							
+							{% if combo.precio_descuento == 0 %}
+								{% if combo.especial == True %}
+									{% if combo.precio_tachado != 0 %}	
+										<div id="slide-precio">
+											<br>
+											<br>
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{combo.precio|floatformat:0}}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{combo.precio_tachado|floatformat:0}}</span></p>	
+										</div>
+									{% else %}
+										<br>
+										<br>
+										<div id="slide-precio" style="margin-bottom: 0px;">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{combo.precio|floatformat:0}}</p>
+										</div>
+										<br>   
+									{% endif %}     
+								{% else %}
+									<div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div>
+									<div id="slide-precio">
+										<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 combo.precio %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{combo.precio|floatformat:0}}</span></p>
+									</div>
+								{% endif %}
+	
+							{% else %}
+	
+								{% if combo.especial == True %}
+									{% if combo.precio_tachado != 0 %}
+										<br>
+										<br>
+										<div id="slide-precio">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{combo.precio|floatformat:0}}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{combo.precio_tachado|floatformat:0}}</span></p>
+										</div>
+									{% else %}
+										<br>
+										<br>
+										<div id="slide-precio" style="margin-bottom: 0px;">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{combo.precio|floatformat:0}}</p>
+										</div>
+										<br>   
+									{% endif %}                            
+								{% else %}
+									<div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div>
+									{% if 'CB016' in products_sku  or 'CB001' in products_sku %}
+										<div id="slide-precio">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 combo.precio_descuento %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{combo.precio_descuento|floatformat:0}}</span></p>
+										</div>
+									{% else %}
+										<div id="slide-precio">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 combo.precio %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{combo.precio|floatformat:0}}</span></p>
+										</div>
+									{% endif %}
+								{% endif %}
+					
+							{% endif %}
+
+							{% if combo.disponible == True %}
+							<button class="col cart-button" id="cart-button"  data-product="{{combo.id}}" data-action="add" data-info="home" onclick="botonTabla(this)" style="background-color: #1d1f1d; outline-style: none;">
+								<span class="add-to-cart">AGREGAR AL CARRITO</span>         
+							{% else %}  
+							<button class="col cart-button" id="sin-stock-button"  data-product="{{combo.id}}" data-action="add"  style="background-color: #1d1f1d; outline-style: none;" disabled>
+								<span class="add-to-cart" >SIN STOCK</span>
+							{% endif %}
+								<span class="added" id="added">AGREGADO</span>
+								<i class="fas fa-shopping-cart"></i>
+								<i class="fas fa-box"></i>
+							</button>
+					
+						</div>
+					</div>
+				{% endfor %}
+	
+			</div>
+		  
+			<!-- If we need navigation buttons -->
+			<div class="swiper-button-prev"></div>
+			<div class="swiper-button-next"></div>  
+	
+		</div>
+	
+
+    </div>
+
+    <div id="productos-home-slider">
+        <hr>
+          <h3 style="text-align: center;" id="productos-home"><a href="https://idacom.com.ar/productos/#">PRODUCTOS</a></h3>
+        <hr>
+
+		<div class="swiper" id="swiper3">
+		
+			<div class="swiper-wrapper">
+				<!-- Slides -->
+	
+				{% for producto in products %}
+					<div class="swiper-slide">
+						<div class="container text-center my-3">
+							<div class="img-div-swiper">
+								<a href="{% url 'detail' producto.slug %}"><img src="{{producto.imageURL}}" style="width: 100px; height: 100px;"></a>
+							</div>
+							<div id="nombre-slide">
+								<a href="{% url 'detail' producto.slug %}" style="color: rgba(0, 0, 0, 0.9); text-decoration: none;">{{producto.nombre}}</a>
+							</div>
+							
+							{% if producto.precio_descuento == 0 %}
+	
+								{% if producto.especial == True %}
+									{% if producto.precio_tachado != 0 %}
+										<br>
+										<br>
+										<div id="slide-precio">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_tachado|floatformat:0}}</span></p>
+										</div>
+									{% else %}
+										<br>
+										<br>
+										<div id="slide-precio" style="margin-bottom: 0px;">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}</p>
+										</div>
+										<br>
+									{% endif %}
+								{% elif producto.precio >= 9000 or order.total_check >= 9000 %}
+									<div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div>
+									<div id="slide-precio">
+										<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 producto.precio %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio|floatformat:0}}</span></p>
+									</div>
+								{% else %}
+									<br>
+									<br>
+									<div id="slide-precio" style="margin-bottom: 0px;">
+										<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${{producto.precio|floatformat:0}}</p>
+									</div>
+									<br>
+								{% endif %}
+	
+							{% else %}
+	
+								{% if producto.especial == True %}		
+									{% if producto.precio_tachado != 0 %}
+										<br>
+										<br>
+										<div id="slide-precio">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_tachado|floatformat:0}}</span></p>
+										</div>
+									{% else %}
+										<br>
+										<br>
+										<div id="slide-precio" style="margin-bottom: 0px;">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}</p>
+										</div>
+										<br>
+									{% endif %}								
+								{% elif producto.precio >= 9000 or order.total_check >= 9000 %}
+									<div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div>
+										{% if 'CB016' in products_sku  or 'LA PLANCHETTA® 1 HORNALLA' in products_sku %}
+											<div id="slide-precio">
+												<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 producto.precio_descuento %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_descuento|floatformat:0}}</span></p>
+											</div>
+										{% else %}
+											<div id="slide-precio">
+												<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 producto.precio %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio|floatformat:0}}</span></p>
+											</div>
+										{% endif %}
+								{% else %}
+									{% if 'CB016' in products_sku  or 'LA PLANCHETTA® 1 HORNALLA' in products_sku %}
+										<div id="slide-precio" style="margin-bottom: -20px;">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${{producto.precio_descuento|floatformat:0}}<br><p id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio|floatformat:0}}</p></p>
+										</div>
+									{% else %}
+										<div id="slide-precio" style="margin-bottom: -20px;">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${{producto.precio|floatformat:0}}<br><p id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_descuento|floatformat:0}}</p></p>
+										</div>
+									{% endif %}
+								{% endif %}
+						
+							{% endif %}
+							
+							{% if producto.disponible == True %}
+							<button class="col cart-button" id="cart-button" data-product="{{producto.id}}" data-action="add" data-info="home" onclick="botonTabla(this)" style="background-color: #1d1f1d; outline-style: none;">
+								<span class="add-to-cart" >AGREGAR AL CARRITO</span>         
+							{% else %}  
+							<button class="col cart-button" id="sin-stock-button"  data-product="{{producto.id}}" data-action="add"  style="background-color: #1d1f1d; outline-style: none;" disabled>
+								<span class="add-to-cart">SIN STOCK</span>
+							{% endif %}
+								<span class="added" id="added">AGREGADO</span>
+								<i class="fas fa-shopping-cart"></i>
+								<i class="fas fa-box"></i>
+							</button>
+
+						</div>
+					</div>
+				{% endfor %}
+
+			</div>
+
+			<!-- If we need navigation buttons -->
+			<div class="swiper-button-prev"></div>
+			<div class="swiper-button-next"></div>  
+
+		</div>
+
+    </div>
+	
+	<div id="productos-home-slider2" style="display: none;">
+        <hr>
+          <h3 style="text-align: center;" id="productos-home"><a href="https://idacom.com.ar/productos/#">PRODUCTOS</a></h3>
+        <hr>
+
+		<div class="swiper" id="swiper4">
+		
+			<div class="swiper-wrapper">
+				<!-- Slides -->
+	
+				{% for producto in products %}
+
+					<div class="swiper-slide">
+						<div class="container text-center my-3">
+							<div class="img-div-swiper">
+								<a href="{% url 'detail' producto.slug %}"><img src="{{producto.imageURL}}" style="width: 100px; height: 100px;"></a>
+							</div>
+							<div id="nombre-slide">
+								<a href="{% url 'detail' producto.slug %}" style="color: rgba(0, 0, 0, 0.9); text-decoration: none;">{{producto.nombre}}</a>
+							</div>
+							
+							{% if producto.precio_descuento == 0 %}
+	
+								{% if producto.especial == True %}
+									{% if producto.precio_tachado != 0 %}
+										<br>
+										<br>
+										<div id="slide-precio">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_tachado|floatformat:0}}</span></p>
+										</div>
+									{% else %}
+										<br>
+										<br>
+										<div id="slide-precio" style="margin-bottom: 0px;">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}</p>
+										</div>
+										<br>
+									{% endif %}
+								{% else %}
+									<div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div>
+									<div id="slide-precio">
+										<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 producto.precio %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio|floatformat:0}}</span></p>
+									</div>
+								{% endif %}
+	
+							{% else %}
+	
+								{% if producto.especial == True %}		
+									{% if producto.precio_tachado != 0 %}
+										<br>
+										<br>
+										<div id="slide-precio">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_tachado|floatformat:0}}</span></p>
+										</div>
+									{% else %}
+										<br>
+										<br>
+										<div id="slide-precio" style="margin-bottom: 0px;">
+											<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px; margin-bottom: 12px;">${{producto.precio|floatformat:0}}</p>
+										</div>
+										<br>
+									{% endif %}								
+								{% else %}
+									<div style="font-family: 'Cuprum', sans-serif; margin-top: 20px; color: rgb(34 228 16); font-weight: 900;">10% OFF</div>
+										{% if 'CB016' in products_sku  or 'LA PLANCHETTA® 1 HORNALLA' in products_sku %}
+											<div id="slide-precio">
+												<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 producto.precio_descuento %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio_descuento|floatformat:0}}</span></p>
+											</div>
+										{% else %}
+											<div id="slide-precio">
+												<p style="color: rgba(0, 0, 0, 0.9); font-size: 18px">${% percentage 10 producto.precio %}<br><span id="precio-tachado" style="color:rgb(187, 27, 27); font-size: 15px">${{producto.precio|floatformat:0}}</span></p>
+											</div>
+										{% endif %}
+								{% endif %}
+						
+							{% endif %}
+							
+							{% if producto.disponible == True %}
+							<button class="col cart-button" id="cart-button" data-product="{{producto.id}}" data-action="add" data-info="home" onclick="botonTabla(this)" style="background-color: #1d1f1d; outline-style: none;">
+								<span class="add-to-cart" >AGREGAR AL CARRITO</span>         
+							{% else %}  
+							<button class="col cart-button" id="sin-stock-button"  data-product="{{producto.id}}" data-action="add"  style="background-color: #1d1f1d; outline-style: none;" disabled>
+								<span class="add-to-cart">SIN STOCK</span>
+							{% endif %}
+								<span class="added" id="added">AGREGADO</span>
+								<i class="fas fa-shopping-cart"></i>
+								<i class="fas fa-box"></i>
+							</button>
+						</div>
+					</div>
+
+				{% endfor %}
+
+			</div>
+
+			<!-- If we need navigation buttons -->
+			<div class="swiper-button-prev"></div>
+			<div class="swiper-button-next"></div>  
+			
+		</div>
+
+    </div>
+
+	<div class="container-fluid" id='before-footer'>
+
+			<hr>
+			<div class="row justify-content-md-center">
+				<div class="col">
+					<img src="/static/images/card-home.png" alt="" id="img-before">
+					<h5 class="title-before">PAGA CON TARJETA O EFECTIVO</h5>
+					<p class="description-before">CON MERCADO PAGO O PRISMA SIEMPRE ES SEGURO.</p>
+				</div>
+				<div class="col ">
+					<img src="/static/images/caja-envio-home2.png" alt="" id="img-before">
+					<h5 class="title-before">ENVIO RAPIDO Y SEGURO</h5> 
+					<p class="description-before">MEDIANTE OCA SEGUI TU COMPRA HASTA QUE LA RECIBAS. TODOS TUS PAQUETES ESTARAN PROTEGIDOS.</p>
+				</div>
+				<div class="col">
+					<img src="/static/images/lock-home.png" alt="" id="img-before">
+					<h5 class="title-before">COMPRA PROTEGIDA</h5>
+					<p class="description-before">TE ACOMPAÑAMOS HASTA QUE RECIBAS LO QUE COMPRASTE. Y SI NO ES LO QUE ESPERABAS, TE DEVOLVEMOS EL DINERO.</p>
+				</div>
+			</div>
+			<hr>
+
+	</div>
+
+	<div id="splide-3-home">
+		<hr>
+		<div class="container text-center my-3">
+
+			<div class="swiper mySwiperHome">
+				<div class="swiper-wrapper">
+					
+					<div class="swiper-slide" >
+						<img src="/static/images/card-home.png" />
+						<h6 style="margin-top: 10px;">PAGA CON TARJETA O EFECTIVO</h6>
+						<p style="font-size: 15px;">CON PRISMA Y MERCADO PAGO SIEMPRE ES SEGURO</p>
+					</div>
+
+					<div class="swiper-slide" >
+						<img src="/static/images/caja-envio-home2.png" />
+						<h6 style="margin-top: 10px;">ENVIO RAPIDO Y SEGURO</h6>
+						<p style="font-size: 15px;">MEDIANTE OCA SEGUI TU COMPRA HASTA QUE LA RECIBAS. TODOS TUS PAQUETES ESTARAN PROTEGIDOS</p>
+
+					</div>
+
+					<div class="swiper-slide" >
+						<img src="/static/images/lock-home.png" />
+						<h6 style="margin-top: 10px;">COMPRA PROTEGIDA</h6>
+						<p style="font-size: 15px;">TE ACOMPAÑAMOS HASTA QUE RECIBAS LO QUE COMPRASTE. Y SI NO ES LO QUE ESPERABAS, TE DEVOLVEMOS EL DINERO</p>
+
+					</div>
+					
+				</div>			
+			</div>
+
+		</div>
+		<hr>
+	</div>
+
+    <p class="label-home-menubar" id="changeText">Envio gratis en ordenes superiores a $4000</p>
+
+	<div id="schema-google-pixel" style="display: none;">
+		{% for producto in productos_schema_org %}
+		<div itemscope itemtype="http://schema.org/Product">
+			<meta itemprop="gtin14" content="{{producto.e_a_n}}"/>
+			<meta itemprop="name" content="{{producto.nombre|title}}"/>
+			<meta itemprop="description" content="{{producto.descripcion}}"/>
+			<meta itemprop="url" content="https://idacom.com.ar">
+			<meta itemprop="productID" content="{{producto.sku}}"/>
+			<meta itemprop="image" content="https://idacom.com.ar{{producto.imageURL}}"/>
+			<div itemprop="value" itemscope itemtype="http://schema.org/PropertyValue">
+					<span itemprop="propertyID" content="{{producto.sku}}"></span>
+					<meta itemprop="value" content="{{producto.categoria}}"></meta>
+			</div>
+			<div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+					<meta itemprop="url" content="https://idacom.com.ar/{{producto.slug}}"/>
+					<link itemprop="availability" href="http://schema.org/InStock">
+					<link itemprop="itemCondition" href="http://schema.org/NewCondition">
+					<meta itemprop="price" content="{{producto.precio|floatformat:0}}"/>
+					<meta itemprop="priceCurrency" content="ARS"/>
+					<meta itemprop="priceValidUntil" content="2022-11-20" />
+			</div>
+			<div itemprop="aggregateRating" itemtype="https://schema.org/AggregateRating" itemscope>
+					<meta itemprop="reviewCount" content="{{producto.get_cantidad_calificaciones}}" />
+					<meta itemprop="ratingValue" content="{{producto.get_calificacion}}" />
+			</div>
+			<div itemprop="review" itemtype="https://schema.org/Review" itemscope>
+					<div itemprop="author" itemtype="https://schema.org/Person" itemscope>
+					  <meta itemprop="name" content="Fred Benson" />
+					</div>
+					<div itemprop="reviewRating" itemtype="https://schema.org/Rating" itemscope>
+					  <meta itemprop="ratingValue" content="4" />
+					  <meta itemprop="bestRating" content="5" />
+					</div>
+			</div>
+			<meta itemprop="sku" content="{{producto.sku}}"/>
+			<div itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
+					<meta itemprop="name" content="{{producto.categoria}}" />
+			</div>
+			<meta property="product:category" content="Home &amp; Garden &gt; Kitchen &amp; Dining &gt; Kitchen Tools &amp; Utensils">
+		</div>
+		{% endfor %}
+	</div>
+	
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.all.min.js"></script>
+	<script type="text/javascript" src="{% static 'js/home.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/bannerSuperior.js' %}"></script>
+
+{% endblock content %}
